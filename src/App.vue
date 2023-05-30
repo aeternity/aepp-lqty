@@ -12,11 +12,14 @@
 
 <script lang="ts" setup>
 import { onMounted } from "vue";
+import useAeSdk from "./composables/aeSdk";
 import { useLqty } from "./composables/lqty";
 
+const { addAccount } = useAeSdk();
 const { preloadContracts, loadingContracts } = useLqty();
 
-onMounted(() => {
+onMounted(async () => {
+    await addAccount();
     preloadContracts();
 });
 </script>

@@ -29,11 +29,11 @@
                                     size="18"
                                     v-if="loadingBorrowingFee"
                                 ></v-progress-circular>
-                                <span v-else> {{ borrowingFee }} AEUSD </span>
+                                <span v-else> {{ aettosToAe(borrowingFee) }} </span>
                             </div>
 
-                            <div>minNetDebt ::{{ minNetDebt }}</div>
-                            <div>priceFeed ::{{ priceFeed }}</div>
+                            <div>minNetDebt ::{{ aettosToAe(minNetDebt) }}</div>
+                            <div>priceFeed ::{{ aettosToAe(priceFeed) }}</div>
                         </div>
                         <v-btn
                             @click.prevent="openTrove()"
@@ -51,6 +51,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from "vue";
+import { aettosToAe } from "@/utils/numbers";
 
 import useAeSdk from "@/composables/aeSdk";
 import { useLqty } from "@/composables/lqty";
