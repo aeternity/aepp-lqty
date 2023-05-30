@@ -5,42 +5,50 @@ import { useLqty } from "./lqty";
 const loadingBorrowingRate = ref(false);
 const borrowingRate = ref(0);
 
+const activeTrove = ref();
 export function useTroveManager() {
   const { contracts } = useLqty();
-  const { contractByteArrayEncoder } = useAeSdk();
+  const { activeAccount } = useAeSdk();
 
   async function getCompositeDebt(dept: any) {
-    const get_composite_debt =
-      await contracts.TroveManager.methods.get_composite_debt(dept);
-    return contractByteArrayEncoder.decode(
-      get_composite_debt.result.returnValue
-    );
+    return (await contracts.TroveManager.methods.get_composite_debt(dept))
+      .decodedResult;
   }
 
   async function loadBorrowingRate() {
     loadingBorrowingRate.value = true;
-    const get_borrowing_fee =
-      await contracts.TroveManager.methods.get_borrowing_rate_with_decay();
-    borrowingRate.value = contractByteArrayEncoder.decode(
-      get_borrowing_fee.result.returnValue
-    );
-    console.log("borrowingRate ::", borrowingRate.value);
+
+    borrowingRate.value = (
+      await contracts.TroveManager.methods.get_borrowing_rate_with_decay()
+    ).decodedResult;
 
     loadingBorrowingRate.value = false;
   }
 
   async function getActualDebtFromComposite(dept: any) {
-    const get_actual_debt_from_composite =
-      await contracts.TroveManager.methods.get_actual_debt_from_composite(dept);
-    return contractByteArrayEncoder.decode(
-      get_actual_debt_from_composite.result.returnValue
+    return (
+      await contracts.TroveManager.methods.get_actual_debt_from_composite(dept)
+    ).decodedResult;
+  }
+
+  async function loadActiveTrove() {
+    const { decodedResult } = await contracts.TroveManager.methods.troves(
+      activeAccount.value
     );
+
+    console.info("========================");
+    console.info("troves.value ::", decodedResult);
+    console.info("========================");
+    activeTrove.value = decodedResult;
   }
 
   return {
     getCompositeDebt,
     loadBorrowingRate,
     getActualDebtFromComposite,
+
+    loadActiveTrove,
+    activeTrove,
 
     loadingBorrowingRate,
     borrowingRate,

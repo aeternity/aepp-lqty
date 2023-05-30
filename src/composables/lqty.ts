@@ -42,6 +42,7 @@ export function useLqty() {
         contractAddress: JSON.parse(contractInfo).address,
         bytecode: contractByteCode,
         aci: JSON.parse(contractACI),
+        omitUnknown: true,
       });
 
       contracts[contract] = contractInstance;

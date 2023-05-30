@@ -29,13 +29,16 @@
                                     size="18"
                                     v-if="loadingBorrowingFee"
                                 ></v-progress-circular>
-                                <span v-else> {{ aettosToAe(borrowingFee) }} </span>
+                                <span v-else>
+                                    {{ aettosToAe(borrowingFee) }}
+                                </span>
                             </div>
 
                             <div>minNetDebt ::{{ aettosToAe(minNetDebt) }}</div>
                             <div>priceFeed ::{{ aettosToAe(priceFeed) }}</div>
                         </div>
                         <v-btn
+                            :loading="loadingOpenTrove"
                             @click.prevent="openTrove()"
                             color="primary"
                             block
@@ -44,8 +47,8 @@
                         </v-btn>
                     </v-form>
                 </v-card-text>
-            </v-card>
-        </v-dialog>
+            </v-card></v-dialog
+        >
     </div>
 </template>
 
@@ -61,7 +64,7 @@ import { useBorrowerOperations } from "@/composables/borrowerOperations";
 import { decimalsPrefix } from "@/utils/numbers";
 
 const { contracts } = useLqty();
-const { aeSdk, contractByteArrayEncoder } = useAeSdk();
+const { aeSdk, contractByteArrayEncoder, activeAccount } = useAeSdk();
 const {
     getCompositeDebt,
     loadBorrowingRate,
@@ -78,7 +81,7 @@ const {
     loadingPriceFeed,
 } = usePriceFeed();
 
-const { loadMinNetDebt, minNetDebt, loadingMinNetDebt } =
+const { loadBorrowerOperationsInitialData, minNetDebt, loadingMinNetDebt } =
     useBorrowerOperations();
 
 const openTroveDialog = ref(false);
@@ -89,7 +92,7 @@ const maxFeePercentage = ref("1000000000000000000"); // 18 zeros
 const loadingBorrowingFee = ref(false);
 const borrowingFee = ref(0);
 
-const ZERO_ADDRESS = "ak_f9bmi44rdvUGKDsTLp3vMCMLMvvqsMQVWyc3XDAYECmCXEbzy";
+const loadingOpenTrove = ref(false);
 
 watch(borrowAmount, async (borrowAmountValue) => {
     loadingBorrowingFee.value = true;
@@ -110,12 +113,13 @@ function onOpenTroveDialog() {
 }
 
 async function openTrove() {
+    loadingOpenTrove.value = true;
     const _borrowAmount = BigInt(borrowAmount.value * 1000000000000000000);
     // find
     const compositeDebt = await getCompositeDebt(borrowingFee.value);
     const totalDebt = compositeDebt + _borrowAmount;
     const netDebt = await getActualDebtFromComposite(totalDebt);
-    const ICR = BigInt(decimalsPrefix(15));
+    const ICR = BigInt(decimalsPrefix(2));
     const amount = (ICR * totalDebt) / priceFeed.value;
     console.info("========================");
     console.info("compositeDebt ::", compositeDebt);
@@ -132,24 +136,61 @@ async function openTrove() {
     console.info("========================");
     console.info("maxFeePercentage.value ::", maxFeePercentage.value);
     console.info("========================");
-    const upperHint = ZERO_ADDRESS;
-    const lowerHint = ZERO_ADDRESS;
+    const upperHint = activeAccount.value;
+    const lowerHint = activeAccount.value;
+
+    if (minNetDebt.value <= netDebt) {
+        console.info("========================");
+        console.info("minNetDebt.value ::", minNetDebt.value);
+        console.info("netDebt ::", netDebt);
+        console.info("========================");
+        loadingOpenTrove.value = false;
+        return;
+    }
 
     // maxFeePercentage, borrowAmount, upperHint, lowerHint, extraParams
     try {
+        //       const data ={
+        //   maxFeePercentage: '1000000000000000000',
+        //   aeusdAmount: 1791044776119402985075n,
+        //   upperHint: 'ak_A8WVnCuJ7t1DjAJf4y8hJrAEVpt1T9ypG3nNBdbpKmpthGvUm',
+        //   lowerHint: 'ak_A8WVnCuJ7t1DjAJf4y8hJrAEVpt1T9ypG3nNBdbpKmpthGvUm',
+        //   extraParams: {
+        //     onAccount: AccountMemory {
+        //       getNetworkId: [AsyncFunction: getNetworkId],
+        //       networkId: undefined,
+        //       isGa: false
+        //     },
+        //     amount: 100000000000000000000n
+        //   }
+        // }
         const _openTrove =
             await contracts.BorrowerOperations.methods.open_trove(
-                maxFeePercentage.value,
-                borrowAmount.value,
+                "1000000000000000000", // maxFeePercentage.value,
+                1791044776119402985075n, //borrowAmount.value,
                 upperHint,
                 lowerHint,
                 {
-                    amount,
+                    amount: 20000000000000000000n,
                     // gas: 1000000,
                     // ttl: 1000,
                     // onAccount: aeSdk.accounts[ZERO_ADDRESS],
                 }
             );
+
+        // const _openTrove =
+        // await contracts.BorrowerOperations.methods.open_trove(
+        //     maxFeePercentage.value,
+        //     borrowAmount.value,
+        //     upperHint,
+        //     lowerHint,
+        //     {
+        //         amount,
+        //         // gas: 1000000,
+        //         // ttl: 1000,
+        //         // onAccount: aeSdk.accounts[ZERO_ADDRESS],
+        //     }
+        // );
 
         console.info("========================");
         console.info("_openTrove ::", _openTrove);
@@ -159,12 +200,14 @@ async function openTrove() {
         console.error("OPEN TROVE ERROR ::", error);
         console.info("========================");
     }
+
+    loadingOpenTrove.value = false;
 }
 
 onMounted(() => {
     loadPriceFeed();
     loadBorrowingRate();
-    loadMinNetDebt();
+    loadBorrowerOperationsInitialData();
     // const encoder = contracts.TroveManager.calldata
     // console.info('========================');
     // console.info('encoder ::', encoder);

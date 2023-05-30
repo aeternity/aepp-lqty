@@ -5,8 +5,10 @@
         </v-col>
         <v-col cols="6">
             <v-card>
-                <v-card-title> $180.25 </v-card-title>
-                <v-card-text> Net Value </v-card-text>
+                <v-card-title>
+                    {{ activeAccountStableTokenBalance }}
+                </v-card-title>
+                <v-card-text> AEUSD </v-card-text>
             </v-card>
         </v-col>
 
@@ -34,5 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-//
+import { useStableToken } from "@/composables/stableToken";
+
+const { activeAccountStableTokenBalance } = useStableToken();
 </script>

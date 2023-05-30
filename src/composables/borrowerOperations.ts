@@ -1,29 +1,52 @@
 import { ref } from "vue";
-import useAeSdk from "./aeSdk";
 import { useLqty } from "./lqty";
 
 const loadingMinNetDebt = ref(false);
 const minNetDebt = ref(0);
 
+const stableCoinGasCompensation = ref(0);
+const borrowingFeeFloor = ref(0);
+
 export function useBorrowerOperations() {
   const { contracts } = useLqty();
-  const { contractByteArrayEncoder } = useAeSdk();
 
   async function loadMinNetDebt() {
     loadingMinNetDebt.value = true;
-    const get_min_net_debt =
-      await contracts.BorrowerOperations.methods.min_net_debt();
-    minNetDebt.value = contractByteArrayEncoder.decode(
-      get_min_net_debt.result.returnValue
-    );
-    console.log("minNetDebt ::", minNetDebt.value);
+    minNetDebt.value = (
+      await contracts.BorrowerOperations.methods.min_net_debt()
+    ).decodedResult;
 
     loadingMinNetDebt.value = false;
+  }
+
+  async function loadStableCoinGasCompensation() {
+    stableCoinGasCompensation.value = (
+      await contracts.BorrowerOperations.methods.aeusd_gas_compensation()
+    ).decodedResult;
+  }
+
+  async function loadBorrowingFeeFloor() {
+    borrowingFeeFloor.value = (
+      await contracts.BorrowerOperations.methods.borrowing_fee_floor()
+    ).decodedResult;
+  }
+
+  async function loadBorrowerOperationsInitialData() {
+    await Promise.all([
+      loadMinNetDebt(),
+      loadStableCoinGasCompensation(),
+      loadBorrowingFeeFloor(),
+    ]);
   }
 
   return {
     loadMinNetDebt,
     minNetDebt,
     loadingMinNetDebt,
+
+    borrowingFeeFloor,
+    stableCoinGasCompensation,
+
+    loadBorrowerOperationsInitialData,
   };
 }

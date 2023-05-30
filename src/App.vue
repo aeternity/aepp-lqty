@@ -20,6 +20,6 @@ const { preloadContracts, loadingContracts } = useLqty();
 
 onMounted(async () => {
     await addAccount();
-    preloadContracts();
+    await preloadContracts();
 });
 </script>

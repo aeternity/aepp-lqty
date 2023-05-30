@@ -1,5 +1,6 @@
 import { ContractByteArrayEncoder } from "@aeternity/aepp-calldata";
 import { AeSdk, MemoryAccount, Node } from "@aeternity/aepp-sdk";
+import { ref } from "vue";
 
 // import { getFilesystem} from '../utils/contractLoader';
 
@@ -14,6 +15,9 @@ const aeSdk = new AeSdk({
 
 const contractByteArrayEncoder = new ContractByteArrayEncoder();
 
+const accounts = ref([]);
+const activeAccount = ref();
+
 export default function useAeSdk() {
   async function addAccount() {
     const mainTestAccount = new MemoryAccount({
@@ -25,6 +29,14 @@ export default function useAeSdk() {
       },
     });
     await aeSdk.addAccount(mainTestAccount, { select: true });
+    accounts.value = Object.keys(aeSdk.accounts) as any;
+    activeAccount.value = aeSdk.selectedAddress;
   }
-  return { aeSdk, addAccount, contractByteArrayEncoder };
+  return {
+    aeSdk,
+    addAccount,
+    contractByteArrayEncoder,
+    accounts,
+    activeAccount,
+  };
 }
