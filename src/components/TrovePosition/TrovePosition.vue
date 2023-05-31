@@ -41,26 +41,15 @@
                 </v-card-text>
                 <v-divider />
                 <v-card-actions>
-                    <v-btn color="primary"> Borrow </v-btn>
+                    <borrow-stable-coin />
                     <v-spacer />
-                    <v-btn color="primary">Payback</v-btn>
+                    <pay-back-stable-coin />
                 </v-card-actions>
             </v-card>
         </v-col>
+
         <v-col cols="6">
-            <v-card>
-                <v-card-text class="d-flex">
-                    <div class="d-flex align-center">
-                        <div class="text-h6 pl-4">
-                            {{ numberFormat(activeTrove.stake) }}
-                            $
-                        </div>
-                    </div>
-                    <v-spacer />
-                    <v-chip small color="orange">Stake</v-chip>
-                </v-card-text>
-                <v-divider />
-            </v-card>
+            <close-trove />
         </v-col>
     </v-row>
 </template>
@@ -70,6 +59,9 @@ import { useTroveManager } from "@/composables/troveManager";
 import { aettosToAe, numberFormat } from "@/utils/numbers";
 import CollateralSupply from "./CollateralSupply.vue";
 import CollateralWithdraw from "./CollateralWithdraw.vue";
+import PayBackStableCoin from "./PayBackStableCoin.vue";
+import BorrowStableCoin from "./BorrowStableCoin.vue";
+import CloseTrove from "./CloseTrove.vue";
 
 const { loadActiveTrove, activeTrove } = useTroveManager();
 </script>

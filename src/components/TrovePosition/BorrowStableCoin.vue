@@ -2,69 +2,74 @@
     <div>
         <v-dialog v-model="dialogOpen" max-width="500px">
             <v-card>
-                <v-card-title> Supply AE </v-card-title>
+                <v-card-title> Borrow AEUSD </v-card-title>
                 <v-card-text>
                     <v-form>
                         <v-text-field
+                            class="mb-4"
                             outline
                             label="Amount"
                             type="number"
                             v-model="amount"
-                            suffix="AE"
+                            suffix="AEUSD"
+                            :error="!!error"
+                            :error-messages="error"
                         ></v-text-field>
                         <v-btn
-                            :loading="loadingSupply"
-                            @click.prevent="supply()"
+                            :loading="loadingBorrow"
+                            @click.prevent="borrow()"
                             color="primary"
                             block
                         >
-                            Supply
+                            Borrow
                         </v-btn>
                     </v-form>
                 </v-card-text>
             </v-card>
         </v-dialog>
 
-        <v-btn color="primary" @click="openDialog()"> Supply </v-btn>
+        <v-btn color="primary" @click="openDialog()"> Borrow </v-btn>
     </div>
 </template>
 
 <script lang="ts" setup>
 import useAeSdk from "@/composables/aeSdk";
 import { useLqty } from "@/composables/lqty";
+import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
 import { decimalsPrefix } from "@/utils/numbers";
 import { ref } from "vue";
 const dialogOpen = ref(false);
 const amount = ref(0);
+const error = ref("");
 
-const { aeSdk, activeAccount } = useAeSdk();
+const { activeAccount } = useAeSdk();
 const { contracts } = useLqty();
 const { loadActiveTrove } = useTroveManager();
+const { loadAccountStableTokenBalance } = useStableToken();
 
-const loadingSupply = ref(false);
+const loadingBorrow = ref(false);
 
-async function supply() {
-    loadingSupply.value = true;
+async function borrow() {
+    error.value = "";
+    loadingBorrow.value = true;
     try {
-        await contracts.BorrowerOperations.methods.add_coll(
+        await contracts.BorrowerOperations.methods.withdraw_aeusd(
+            "1000000000000000000",
+            decimalsPrefix(amount.value),
             activeAccount.value,
             activeAccount.value,
-            {
-              amount: decimalsPrefix(amount.value),
-            }
+            {}
         );
         await loadActiveTrove();
+        await loadAccountStableTokenBalance();
         amount.value = 0;
 
         dialogOpen.value = false;
-    } catch (error) {
-        console.info("========================");
-        console.error("error ::", error);
-        console.info("========================");
+    } catch (_error: any) {
+        error.value = _error.message;
     }
-    loadingSupply.value = false;
-    dialogOpen.value = false;
+    loadingBorrow.value = false;
 }
 
 function openDialog() {

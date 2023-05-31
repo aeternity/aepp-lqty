@@ -27,5 +27,6 @@ async function loadBalance() {
 
 onMounted(async () => {
     loadBalance();
+    setInterval(loadBalance, 5000);
 });
 </script>

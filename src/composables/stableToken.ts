@@ -5,21 +5,21 @@ import { useLqty } from "./lqty";
 const activeAccountStableTokenBalance = ref(BigInt(0));
 
 export function useStableToken() {
-  const { activeAccount, contractByteArrayEncoder } = useAeSdk();
+  const { activeAccount } = useAeSdk();
   const { contracts } = useLqty();
 
-  async function getAccountStableTokenBalance(address: string) {
-    const get_balance = await contracts.AEUSDToken.methods.balance(address);
-    return contractByteArrayEncoder.decode(get_balance.result.returnValue);
+  async function loadAccountStableTokenBalance() {
+    activeAccountStableTokenBalance.value = (
+      await contracts.AEUSDToken.methods.balance(activeAccount.value)
+    ).decodedResult;
   }
 
-  watch(activeAccount, async (address) => {
-    activeAccountStableTokenBalance.value = await getAccountStableTokenBalance(
-      address
-    );
+  watch(activeAccount, async (address) => loadAccountStableTokenBalance(), {
+    immediate: true,
   });
 
   return {
     activeAccountStableTokenBalance,
+    loadAccountStableTokenBalance,
   };
 }

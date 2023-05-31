@@ -6,7 +6,7 @@
         <v-col cols="6">
             <v-card>
                 <v-card-title>
-                    {{ activeAccountStableTokenBalance }}
+                    {{ numberFormat(activeAccountStableTokenBalance) }}
                 </v-card-title>
                 <v-card-text> AEUSD </v-card-text>
             </v-card>
@@ -14,21 +14,21 @@
 
         <v-col cols="6">
             <v-card>
-                <v-card-title> 0.12% </v-card-title>
+                <v-card-title> TODO </v-card-title>
                 <v-card-text> Borrow Fee </v-card-text>
             </v-card>
         </v-col>
 
         <v-col cols="6">
             <v-card>
-                <v-card-title> 1.12% </v-card-title>
+                <v-card-title> TODO </v-card-title>
                 <v-card-text> D / C (%) </v-card-text>
             </v-card>
         </v-col>
 
         <v-col cols="6">
             <v-card>
-                <v-card-title> $12.25 / $1,226.44 </v-card-title>
+                <v-card-title> TODO </v-card-title>
                 <v-card-text> Liquidation (AE) </v-card-text>
             </v-card>
         </v-col>
@@ -37,6 +37,7 @@
 
 <script lang="ts" setup>
 import { useStableToken } from "@/composables/stableToken";
+import { aettosToAe, numberFormat } from "@/utils/numbers";
 
 const { activeAccountStableTokenBalance } = useStableToken();
 </script>
