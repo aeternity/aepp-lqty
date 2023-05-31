@@ -1,12 +1,28 @@
 <template>
-    <div v-if="activeAccount" class="pa-2 d-flex align-center">
-        <v-chip>
-            {{ formatAddress(activeAccount) }}
-        </v-chip>
-
-        <div class="pl-4">
-            {{ aettosToAe(balance) }}
-        </div>
+    <div class="d-flex align-center">
+        <v-menu>
+            <template v-slot:activator="{ props }">
+                <v-btn color="primary" v-bind="props">
+                    {{
+                        activeAccount
+                            ? formatAddress(activeAccount)
+                            : "Select Account"
+                    }}
+                </v-btn>
+            </template>
+            <v-list>
+                <v-list-item
+                    v-for="(account, index) in accounts"
+                    :key="index"
+                    :value="index"
+                    :disabled="account === activeAccount"
+                    @click="onSelectAccount(account)"
+                >
+                    <v-list-item-title>{{ account }}</v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+        <v-chip class="mx-4"> {{ aettosToAe(balance) }} </v-chip>
     </div>
 </template>
 
@@ -14,7 +30,7 @@
 import useAeSdk from "@/composables/aeSdk";
 import { onMounted, ref } from "vue";
 import { aettosToAe } from "@/utils/numbers";
-const { aeSdk, activeAccount } = useAeSdk();
+const { aeSdk, activeAccount, accounts, onSelectAccount } = useAeSdk();
 const balance = ref(BigInt(0));
 
 function formatAddress(address: string) {

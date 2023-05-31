@@ -1,7 +1,11 @@
 <template>
     <div>
-        <account-overview/>
-        <account-positions/>
+        <account-overview />
+        <account-positions />
+
+        <pre>
+          {{ activeAccount }}
+        </pre>
     </div>
 </template>
 
@@ -12,7 +16,7 @@ import AccountPositions from "@/components/AccountPositions.vue";
 import { onMounted } from "vue";
 import { useLqty } from "@/composables/lqty";
 
-const { aeSdk } = useAeSdk();
+const { aeSdk, activeAccount } = useAeSdk();
 const { contracts } = useLqty();
 
 onMounted(async () => {

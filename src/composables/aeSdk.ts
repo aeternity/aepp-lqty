@@ -20,23 +20,43 @@ const activeAccount = ref();
 
 export default function useAeSdk() {
   async function addAccount() {
-    const mainTestAccount = new MemoryAccount({
-      // replace <SENDER_SECRET> and <SENDER_PUBLIC_KEY> with the generated keypair from step 2
-      keypair: {
-        secretKey:
-          "9262701814da8149615d025377e2a08b5f10a6d33d1acaf2f5e703e87fe19c83569ecc7803d297fde01758f1bdc9e0c2eb666865284dff8fa39edb2267de70db",
-        publicKey: "ak_f9bmi44rdvUGKDsTLp3vMCMLMvvqsMQVWyc3XDAYECmCXEbzy",
-      },
-    });
-    await aeSdk.addAccount(mainTestAccount, { select: true });
+    await aeSdk.addAccount(
+      new MemoryAccount({
+        keypair: {
+          secretKey:
+            "7c6e602a94f30e4ea7edabe4376314f69ba7eaa2f355ecedb339df847b6f0d80575f81ffb0a297b7725dc671da0b1769b1fc5cbe45385c7b5ad1fc2eaf1d609d",
+          publicKey: "ak_fUq2NesPXcYZ1CcqBcGC3StpdnQw3iVxMA3YSeCNAwfN4myQk",
+        },
+      }),
+      { select: false }
+    );
+
+    await aeSdk.addAccount(
+      new MemoryAccount({
+        keypair: {
+          secretKey:
+            "9262701814da8149615d025377e2a08b5f10a6d33d1acaf2f5e703e87fe19c83569ecc7803d297fde01758f1bdc9e0c2eb666865284dff8fa39edb2267de70db",
+          publicKey: "ak_f9bmi44rdvUGKDsTLp3vMCMLMvvqsMQVWyc3XDAYECmCXEbzy",
+        },
+      }),
+      { select: true }
+    );
+
     accounts.value = Object.keys(aeSdk.accounts) as any;
     activeAccount.value = aeSdk.selectedAddress;
   }
+
+  async function onSelectAccount(address: any) {
+    await aeSdk.selectAccount(address);
+    activeAccount.value = aeSdk.selectedAddress;
+  }
+
   return {
     aeSdk,
     addAccount,
     contractByteArrayEncoder,
     accounts,
     activeAccount,
+    onSelectAccount,
   };
 }

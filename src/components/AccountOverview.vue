@@ -8,7 +8,12 @@
                 <v-card-title>
                     {{ numberFormat(activeAccountStableTokenBalance) }}
                 </v-card-title>
-                <v-card-text> AEUSD </v-card-text>
+                <v-card-text class="d-flex align-center justify-space-between">
+                  <div>
+                    AEUSD
+                  </div>
+                  <transfer-stable-token />
+                </v-card-text>
             </v-card>
         </v-col>
 
@@ -37,6 +42,7 @@
 
 <script lang="ts" setup>
 import { useStableToken } from "@/composables/stableToken";
+import TransferStableToken from "./Exchange/TransferStableToken.vue";
 import { aettosToAe, numberFormat } from "@/utils/numbers";
 
 const { activeAccountStableTokenBalance } = useStableToken();

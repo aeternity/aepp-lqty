@@ -32,6 +32,9 @@ export function useTroveManager() {
   }
 
   async function loadActiveTrove() {
+    console.info("========================");
+    console.info("loadActiveTrove ::", activeAccount.value);
+    console.info("========================");
     const { decodedResult } = await contracts.TroveManager.methods.troves(
       activeAccount.value
     );

@@ -51,7 +51,8 @@ async function supply() {
             activeAccount.value,
             activeAccount.value,
             {
-              amount: decimalsPrefix(amount.value),
+                amount: decimalsPrefix(amount.value),
+                onAccount: aeSdk.accounts[activeAccount.value],
             }
         );
         await loadActiveTrove();

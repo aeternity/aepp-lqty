@@ -1,76 +1,72 @@
 <template>
     <div>
+        <v-btn color="green" @click="dialogOpen = true"> Transfer </v-btn>
+
         <v-dialog v-model="dialogOpen" max-width="500px">
             <v-card>
-                <v-card-title> Withdraw AE </v-card-title>
+                <v-card-title> Transfer AEUSD </v-card-title>
                 <v-card-text>
                     <v-form>
                         <v-text-field
                             class="mb-4"
                             outline
+                            label="Recipient"
+                            type="text"
+                            v-model="recipient"
+                        ></v-text-field>
+                        <v-text-field
                             label="Amount"
                             type="number"
                             v-model="amount"
-                            suffix="AE"
-                            :error="!!error"
-                            :error-messages="error"
+                            suffix="AEUSD"
                         ></v-text-field>
                         <v-btn
-                            :loading="loadingWithdraw"
-                            @click.prevent="withdraw()"
+                            :loading="loadingTransfer"
+                            @click.prevent="transfer()"
                             color="primary"
                             block
                         >
-                            Withdraw
+                            Transfer
                         </v-btn>
                     </v-form>
                 </v-card-text>
             </v-card>
         </v-dialog>
-
-        <v-btn color="primary" @click="openDialog()"> Withdraw</v-btn>
     </div>
 </template>
 
 <script lang="ts" setup>
-import useAeSdk from "@/composables/aeSdk";
-import { useLqty } from "@/composables/lqty";
-import { useTroveManager } from "@/composables/troveManager";
-import { decimalsPrefix } from "@/utils/numbers";
 import { ref } from "vue";
+import { useLqty } from "@/composables/lqty";
+
+import { decimalsPrefix } from "@/utils/numbers";
+import useAeSdk from "@/composables/aeSdk";
+import { useStableToken } from "@/composables/stableToken";
+const { contracts } = useLqty();
+const { activeAccount, aeSdk } = useAeSdk();
+const { loadAccountStableTokenBalance } = useStableToken();
 const dialogOpen = ref(false);
 const amount = ref(0);
-const error = ref("");
+const recipient = ref("");
+const loadingTransfer = ref(false);
 
-const { activeAccount, aeSdk } = useAeSdk();
-const { contracts } = useLqty();
-const { loadActiveTrove } = useTroveManager();
-
-const loadingWithdraw = ref(false);
-
-async function withdraw() {
-    error.value = "";
-    loadingWithdraw.value = true;
+async function transfer() {
+    loadingTransfer.value = true;
     try {
-        await contracts.BorrowerOperations.methods.withdraw_coll(
+        await contracts.AEUSDToken.methods.transfer(
+            recipient.value,
             decimalsPrefix(amount.value),
-            activeAccount.value,
-            activeAccount.value,
             {
                 onAccount: aeSdk.accounts[activeAccount.value],
             }
         );
-        await loadActiveTrove();
+        await loadAccountStableTokenBalance();
         amount.value = 0;
-
         dialogOpen.value = false;
     } catch (_error: any) {
-        error.value = _error.message;
+        console.error(_error);
+    } finally {
+        loadingTransfer.value = false;
     }
-    loadingWithdraw.value = false;
-}
-
-function openDialog() {
-    dialogOpen.value = true;
 }
 </script>

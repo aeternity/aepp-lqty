@@ -11,7 +11,7 @@ export function useStableToken() {
   async function loadAccountStableTokenBalance() {
     activeAccountStableTokenBalance.value = (
       await contracts.AEUSDToken.methods.balance(activeAccount.value)
-    ).decodedResult;
+    ).decodedResult ?? BigInt(0);
   }
 
   watch(activeAccount, async (address) => loadAccountStableTokenBalance(), {

@@ -43,7 +43,7 @@ const dialogOpen = ref(false);
 const amount = ref(0);
 const error = ref("");
 
-const { activeAccount } = useAeSdk();
+const { activeAccount, aeSdk } = useAeSdk();
 const { contracts } = useLqty();
 const { loadActiveTrove } = useTroveManager();
 const { loadAccountStableTokenBalance } = useStableToken();
@@ -59,7 +59,9 @@ async function borrow() {
             decimalsPrefix(amount.value),
             activeAccount.value,
             activeAccount.value,
-            {}
+            {
+                onAccount: aeSdk.accounts[activeAccount.value],
+            }
         );
         await loadActiveTrove();
         await loadAccountStableTokenBalance();
