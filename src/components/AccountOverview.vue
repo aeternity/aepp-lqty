@@ -19,7 +19,7 @@
 
         <v-col cols="6">
             <v-card>
-                <v-card-title> TODO </v-card-title>
+                <v-card-title> 0.50% </v-card-title>
                 <v-card-text> Borrow Fee </v-card-text>
             </v-card>
         </v-col>
