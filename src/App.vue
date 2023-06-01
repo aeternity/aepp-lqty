@@ -1,5 +1,5 @@
 <template>
-    <div v-if="loadingContracts" class="text-center pt-12">
+    <div v-if="false" class="text-center pt-12">
         <v-progress-circular
             indeterminate
             color="primary"
@@ -14,12 +14,15 @@
 import { onMounted } from "vue";
 import useAeSdk from "./composables/aeSdk";
 import { useLqty } from "./composables/lqty";
+import { useAeppSdk } from "./composables";
 
-const { addAccount } = useAeSdk();
-const { preloadContracts, loadingContracts } = useLqty();
+// const { addAccount } = useAeSdk();
+// const { preloadContracts, loadingContracts } = useLqty();
+const { initSdk } = useAeppSdk();
 
 onMounted(async () => {
-    await addAccount();
-    await preloadContracts();
+    initSdk();
+    // await addAccount();
+    // await preloadContracts();
 });
 </script>
