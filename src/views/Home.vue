@@ -1,23 +1,39 @@
 <template>
     <div>
+        <div v-if="contractsLoaded">
+            <account-overview />
+            <account-positions />
+        </div>
+        <div>
+            <v-btn
+                v-if="activeAccount"
+                color="primary"
+                @click="preloadContracts()"
+                :loading="loadingContracts"
+                >Load Contracts</v-btn
+            >
+        </div>
 
+        <pre>
+          {{ activeAccount }}
+        </pre>
     </div>
 </template>
 
 <script lang="ts" setup>
-// import useAeSdk from "@/composables/aeSdk";
-// import AccountOverview from "@/components/AccountOverview.vue";
-// import AccountPositions from "@/components/AccountPositions.vue";
+import AccountOverview from "@/components/AccountOverview.vue";
+import AccountPositions from "@/components/AccountPositions.vue";
 import { onMounted } from "vue";
-// import { useLqty } from "@/composables/lqty";
+import { useAeppSdk, useLqty } from "@/composables";
 
-// const { aeSdk, activeAccount } = useAeSdk();
-// const { contracts } = useLqty();
+const { aeSdk, activeAccount } = useAeppSdk();
+const { contracts, contractsLoaded, loadingContracts, preloadContracts } =
+    useLqty();
 
 onMounted(async () => {
-    // console.log("===========");
-    // console.log("contracts:: ", contracts);
-    // console.log("===========");
+    console.log("===========");
+    console.log("contracts:: ", contracts);
+    console.log("===========");
 
     // const accounts = aeSdk.accounts;
     // console.info("========================");

@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import useAeSdk from "@/composables/aeSdk";
+import { useAeppSdk } from "@/composables";
 import { useLqty } from "@/composables/lqty";
 import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
@@ -44,7 +44,7 @@ import { ref } from "vue";
 const dialogOpen = ref(false);
 const error = ref();
 
-const { aeSdk, activeAccount } = useAeSdk();
+const { onAccount } = useAeppSdk();
 const { contracts } = useLqty();
 const { loadActiveTrove } = useTroveManager();
 const { loadAccountStableTokenBalance } = useStableToken();
@@ -55,7 +55,7 @@ async function closeTrove() {
     loadingTroveClose.value = true;
     try {
         await contracts.BorrowerOperations.methods.close_trove({
-            onAccount: aeSdk.accounts[activeAccount.value],
+          onAccount: onAccount(),
         });
         await loadActiveTrove();
 

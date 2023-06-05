@@ -40,10 +40,10 @@ import { ref } from "vue";
 import { useLqty } from "@/composables/lqty";
 
 import { decimalsPrefix } from "@/utils/numbers";
-import useAeSdk from "@/composables/aeSdk";
 import { useStableToken } from "@/composables/stableToken";
+import { useAeppSdk } from "@/composables";
 const { contracts } = useLqty();
-const { activeAccount, aeSdk } = useAeSdk();
+const {  onAccount } = useAeppSdk();
 const { loadAccountStableTokenBalance } = useStableToken();
 const dialogOpen = ref(false);
 const amount = ref(0);
@@ -57,7 +57,7 @@ async function transfer() {
             recipient.value,
             decimalsPrefix(amount.value),
             {
-                onAccount: aeSdk.accounts[activeAccount.value],
+              onAccount: onAccount(),
             }
         );
         await loadAccountStableTokenBalance();

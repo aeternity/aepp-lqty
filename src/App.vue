@@ -11,18 +11,15 @@
 </template>
 
 <script lang="ts" setup>
+import { useAeppSdk, useLqty } from "@/composables";
 import { onMounted } from "vue";
-import useAeSdk from "./composables/aeSdk";
-import { useLqty } from "./composables/lqty";
-import { useAeppSdk } from "./composables";
 
 // const { addAccount } = useAeSdk();
-// const { preloadContracts, loadingContracts } = useLqty();
+const { preloadContracts, loadingContracts } = useLqty();
 const { initSdk } = useAeppSdk();
 
 onMounted(async () => {
-    initSdk();
-    // await addAccount();
+    await initSdk();
     // await preloadContracts();
 });
 </script>

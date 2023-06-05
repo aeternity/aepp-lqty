@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import useAeSdk from "@/composables/aeSdk";
+import { useAeppSdk } from "@/composables";
 import { useLqty } from "@/composables/lqty";
 import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
@@ -43,7 +43,7 @@ const dialogOpen = ref(false);
 const amount = ref(0);
 const error = ref("");
 
-const { activeAccount, aeSdk } = useAeSdk();
+const { activeAccount, onAccount } = useAeppSdk();
 const { contracts } = useLqty();
 const { loadActiveTrove } = useTroveManager();
 const { loadAccountStableTokenBalance } = useStableToken();
@@ -60,7 +60,7 @@ async function borrow() {
             activeAccount.value,
             activeAccount.value,
             {
-                onAccount: aeSdk.accounts[activeAccount.value],
+              onAccount: onAccount(),
             }
         );
         await loadActiveTrove();

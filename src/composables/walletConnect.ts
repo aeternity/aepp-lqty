@@ -11,12 +11,13 @@ const connectedWalletInfo = ref<WalletInfo>();
 const scanningForWallets = ref(false);
 
 export function useWalletConnect() {
-  const { aeSdk, scanForAccounts } = useAeppSdk();
+  const { getSdk, scanForAccounts } = useAeppSdk();
 
   /**
    * Scan for wallets
    */
   async function scanForWallets() {
+    const aeSdk = await getSdk()
     scanningForWallets.value = true;
 
     const foundWallet: any = await new Promise((resolve) => {
@@ -30,6 +31,7 @@ export function useWalletConnect() {
 
     const walletInfo = await aeSdk.connectToWallet(foundWallet.getConnection());
     await aeSdk.subscribeAddress(SUBSCRIPTION_TYPES.subscribe, "current");
+
     await scanForAccounts();
 
     scanningForWallets.value = false;

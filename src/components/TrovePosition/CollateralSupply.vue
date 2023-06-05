@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import useAeSdk from "@/composables/aeSdk";
+import { useAeppSdk } from "@/composables";
 import { useLqty } from "@/composables/lqty";
 import { useTroveManager } from "@/composables/troveManager";
 import { decimalsPrefix } from "@/utils/numbers";
@@ -38,7 +38,7 @@ import { ref } from "vue";
 const dialogOpen = ref(false);
 const amount = ref(0);
 
-const { aeSdk, activeAccount } = useAeSdk();
+const { onAccount, activeAccount } = useAeppSdk();
 const { contracts } = useLqty();
 const { loadActiveTrove } = useTroveManager();
 
@@ -52,7 +52,7 @@ async function supply() {
             activeAccount.value,
             {
                 amount: decimalsPrefix(amount.value),
-                onAccount: aeSdk.accounts[activeAccount.value],
+                onAccount: onAccount(),
             }
         );
         await loadActiveTrove();
