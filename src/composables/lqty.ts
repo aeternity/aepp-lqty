@@ -1,14 +1,22 @@
 import { ref } from "vue";
-import useAeSdk from "./aeSdk";
+import { useAeppSdk } from "./aeppSdk";
 
 const contracts: any = {};
-const loadingContracts = ref(true);
+const loadingContracts = ref(false);
+const contractsLoaded = ref(false);
 
 export function useLqty() {
-  const { aeSdk } = useAeSdk();
+  const { getSdk } = useAeppSdk();
 
   async function preloadContracts() {
+    const sdk = await getSdk();
+    console.info("========================");
+    console.info("preloadContracts aeSdk::", sdk);
+    console.info("========================");
+
     loadingContracts.value = true;
+    const deployableContracts = ["TroveManager"];
+
     const _contracts = [
       "ActivePool",
       "AEUSDToken",
@@ -38,7 +46,7 @@ export function useLqty() {
         await import(`../contracts/${contract}.bytecode?raw`)
       ).default;
 
-      const contractInstance = await aeSdk.getContractInstance({
+      const contractInstance = await sdk.getContractInstance({
         contractAddress: JSON.parse(contractInfo).address,
         bytecode: contractByteCode,
         aci: JSON.parse(contractACI),
@@ -49,7 +57,8 @@ export function useLqty() {
     }
 
     loadingContracts.value = false;
+    contractsLoaded.value = true;
   }
 
-  return { contracts, preloadContracts, loadingContracts };
+  return { contracts, preloadContracts, loadingContracts, contractsLoaded };
 }

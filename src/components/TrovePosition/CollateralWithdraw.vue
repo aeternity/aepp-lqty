@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import useAeSdk from "@/composables/aeSdk";
+import { useAeppSdk } from "@/composables";
 import { useLqty } from "@/composables/lqty";
 import { useTroveManager } from "@/composables/troveManager";
 import { decimalsPrefix } from "@/utils/numbers";
@@ -42,7 +42,7 @@ const dialogOpen = ref(false);
 const amount = ref(0);
 const error = ref("");
 
-const { activeAccount, aeSdk } = useAeSdk();
+const { activeAccount, onAccount } = useAeppSdk();
 const { contracts } = useLqty();
 const { loadActiveTrove } = useTroveManager();
 
@@ -57,7 +57,7 @@ async function withdraw() {
             activeAccount.value,
             activeAccount.value,
             {
-                onAccount: aeSdk.accounts[activeAccount.value],
+              onAccount: onAccount(),
             }
         );
         await loadActiveTrove();

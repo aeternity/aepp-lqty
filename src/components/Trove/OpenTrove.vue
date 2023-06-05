@@ -115,15 +115,16 @@
 import { onMounted, ref, watch } from "vue";
 import { numberFormat } from "@/utils/numbers";
 
-import useAeSdk from "@/composables/aeSdk";
 import { useLqty } from "@/composables/lqty";
 import { useTroveManager } from "@/composables/troveManager";
 import { usePriceFeed } from "@/composables/priceFeed";
 import { useBorrowerOperations } from "@/composables/borrowerOperations";
 import { decimalsPrefix } from "@/utils/numbers";
+import { useAeppSdk } from "@/composables";
+import { createOnAccountObject } from "@/utils";
 
 const { contracts } = useLqty();
-const { aeSdk, activeAccount } = useAeSdk();
+const { aeSdk, activeAccount, onAccount } = useAeppSdk();
 const {
     getCompositeDebt,
     loadBorrowingRate,
@@ -192,16 +193,21 @@ async function openTrove() {
 
     // maxFeePercentage, borrowAmount, upperHint, lowerHint, extraParams
     try {
-        await contracts.BorrowerOperations.methods.open_trove(
+        const tx = await contracts.BorrowerOperations.methods.open_trove(
             maxFeePercentage.value, // maxFeePercentage.value,
             amount, //borrowAmount.value,
             activeAccount.value,
             activeAccount.value,
             {
                 amount: decimalsPrefix(collateral.value),
-                onAccount: aeSdk.accounts[activeAccount.value],
+                onAccount: onAccount(),
+                waitMined: false,
             }
         );
+
+        console.info("========================");
+        console.info("open trove tx ::", tx);
+        console.info("========================");
 
         await loadActiveTrove();
         openTroveDialog.value = false;

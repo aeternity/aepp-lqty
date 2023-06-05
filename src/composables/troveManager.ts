@@ -1,6 +1,6 @@
 import { ref } from "vue";
-import useAeSdk from "./aeSdk";
 import { useLqty } from "./lqty";
+import { useAeppSdk } from "./aeppSdk";
 
 const loadingBorrowingRate = ref(false);
 const borrowingRate = ref(0);
@@ -8,7 +8,7 @@ const borrowingRate = ref(0);
 const activeTrove = ref();
 export function useTroveManager() {
   const { contracts } = useLqty();
-  const { activeAccount } = useAeSdk();
+  const { activeAccount } = useAeppSdk();
 
   async function getCompositeDebt(dept: any) {
     return (await contracts.TroveManager.methods.get_composite_debt(dept))
