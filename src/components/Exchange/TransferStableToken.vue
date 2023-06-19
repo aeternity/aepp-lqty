@@ -4,7 +4,7 @@
 
         <v-dialog v-model="dialogOpen" max-width="500px">
             <v-card>
-                <v-card-title> Transfer AEUSD </v-card-title>
+                <v-card-title> Transfer {{ AEUSD_TOKEN.symbol }} </v-card-title>
                 <v-card-text>
                     <v-form>
                         <v-text-field
@@ -18,7 +18,7 @@
                             label="Amount"
                             type="number"
                             v-model="amount"
-                            suffix="AEUSD"
+                            :suffix="AEUSD_TOKEN.symbol"
                         ></v-text-field>
                         <v-btn
                             :loading="loadingTransfer"
@@ -35,38 +35,52 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { ref } from "vue";
-import { useLqty } from "@/composables/lqty";
 
-import { decimalsPrefix } from "@/utils/numbers";
-import { useStableToken } from "@/composables/stableToken";
 import { useAeppSdk } from "@/composables";
-const { contracts } = useLqty();
-const {  onAccount } = useAeppSdk();
-const { loadAccountStableTokenBalance } = useStableToken();
-const dialogOpen = ref(false);
-const amount = ref(0);
-const recipient = ref("");
-const loadingTransfer = ref(false);
+import { useStableToken } from "@/composables/stableToken";
+import { Decimal } from "@liquity/lib-base";
+import { AEUSD_TOKEN } from "@/utils";
 
-async function transfer() {
-    loadingTransfer.value = true;
-    try {
-        await contracts.AEUSDToken.methods.transfer(
-            recipient.value,
-            decimalsPrefix(amount.value),
-            {
-              onAccount: onAccount(),
+export default {
+    setup() {
+        const { onAccount, contracts } = useAeppSdk();
+        const { loadAccountStableTokenBalance } = useStableToken();
+        const dialogOpen = ref(false);
+        const amount = ref(0);
+        const recipient = ref("");
+        const loadingTransfer = ref(false);
+
+        async function transfer() {
+            loadingTransfer.value = true;
+            try {
+                await contracts.AEUSDToken.methods.transfer(
+                    recipient.value,
+                    Decimal.from(amount.value ?? 0).bigNumber,
+                    {
+                        onAccount: onAccount(),
+                    }
+                );
+                await loadAccountStableTokenBalance();
+                amount.value = 0;
+                dialogOpen.value = false;
+            } catch (_error: any) {
+                console.error(_error);
+            } finally {
+                loadingTransfer.value = false;
             }
-        );
-        await loadAccountStableTokenBalance();
-        amount.value = 0;
-        dialogOpen.value = false;
-    } catch (_error: any) {
-        console.error(_error);
-    } finally {
-        loadingTransfer.value = false;
-    }
-}
+        }
+
+        return {
+            dialogOpen,
+            amount,
+            recipient,
+            loadingTransfer,
+            transfer,
+
+            AEUSD_TOKEN,
+        };
+    },
+};
 </script>

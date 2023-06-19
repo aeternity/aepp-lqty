@@ -6,13 +6,11 @@
         <v-col cols="6">
             <v-card>
                 <v-card-title>
-                    {{ numberFormat(activeAccountStableTokenBalance) }}
+                    {{ activeAccountStableTokenBalance?.prettify(2) }}
                 </v-card-title>
                 <v-card-text class="d-flex align-center justify-space-between">
-                  <div>
-                    AEUSD
-                  </div>
-                  <transfer-stable-token />
+                    <div>{{ AEUSD_TOKEN.symbol }}</div>
+                    <TransferStableToken />
                 </v-card-text>
             </v-card>
         </v-col>
@@ -40,10 +38,22 @@
     </v-row>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { useStableToken } from "@/composables/stableToken";
+import { AEUSD_TOKEN } from "@/utils";
 import TransferStableToken from "./Exchange/TransferStableToken.vue";
-import { aettosToAe, numberFormat } from "@/utils/numbers";
 
-const { activeAccountStableTokenBalance } = useStableToken();
+export default {
+    components: {
+        TransferStableToken,
+    },
+    setup() {
+        const { activeAccountStableTokenBalance } = useStableToken();
+
+        return {
+            activeAccountStableTokenBalance,
+            AEUSD_TOKEN,
+        };
+    },
+};
 </script>

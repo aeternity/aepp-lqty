@@ -35,39 +35,50 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { useAeppSdk } from "@/composables";
-import { useLqty } from "@/composables/lqty";
 import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
 import { ref } from "vue";
-const dialogOpen = ref(false);
-const error = ref();
 
-const { onAccount } = useAeppSdk();
-const { contracts } = useLqty();
-const { loadActiveTrove } = useTroveManager();
-const { loadAccountStableTokenBalance } = useStableToken();
+export default {
+    setup() {
+        const dialogOpen = ref(false);
+        const error = ref();
 
-const loadingTroveClose = ref(false);
+        const { onAccount, contracts } = useAeppSdk();
+        const { loadActiveTrove } = useTroveManager();
+        const { loadAccountStableTokenBalance } = useStableToken();
 
-async function closeTrove() {
-    loadingTroveClose.value = true;
-    try {
-        await contracts.BorrowerOperations.methods.close_trove({
-          onAccount: onAccount(),
-        });
-        await loadActiveTrove();
+        const loadingTroveClose = ref(false);
 
-        dialogOpen.value = false;
-        loadAccountStableTokenBalance();
-    } catch (_error: any) {
-        error.value = _error.message;
-    }
-    loadingTroveClose.value = false;
-}
+        async function closeTrove() {
+            loadingTroveClose.value = true;
+            try {
+                await contracts.BorrowerOperations.methods.close_trove({
+                    onAccount: onAccount(),
+                });
+                await loadActiveTrove();
 
-function openDialog() {
-    dialogOpen.value = true;
-}
+                dialogOpen.value = false;
+                loadAccountStableTokenBalance();
+            } catch (_error: any) {
+                error.value = _error.message;
+            }
+            loadingTroveClose.value = false;
+        }
+
+        function openDialog() {
+            dialogOpen.value = true;
+        }
+
+        return {
+            dialogOpen,
+            error,
+            loadingTroveClose,
+            closeTrove,
+            openDialog,
+        };
+    },
+};
 </script>

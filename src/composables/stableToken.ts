@@ -1,22 +1,29 @@
+import { useAccounts } from "@/store/accounts";
 import { ref, watch } from "vue";
-import { useLqty } from "./lqty";
 import { useAeppSdk } from "./aeppSdk";
+import { Decimal } from "@liquity/lib-base";
 
-const activeAccountStableTokenBalance = ref(BigInt(0));
+const activeAccountStableTokenBalance = ref<Decimal>(Decimal.ZERO);
 
 export function useStableToken() {
-  const { activeAccount } = useAeppSdk();
-  const { contracts } = useLqty();
+  const accounts = useAccounts();
+
+  const { contracts } = useAeppSdk();
 
   async function loadAccountStableTokenBalance() {
-    activeAccountStableTokenBalance.value =
-      (await contracts.AEUSDToken.methods.balance(activeAccount.value))
-        .decodedResult ?? BigInt(0);
+    activeAccountStableTokenBalance.value = Decimal.fromBigNumberString(
+      (await contracts.AEUSDToken.methods.balance(accounts.activeAccount))
+        .decodedResult
+    );
   }
 
-  watch(activeAccount, async (address) => loadAccountStableTokenBalance(), {
-    immediate: true,
-  });
+  watch(
+    () => accounts.activeAccount,
+    async (address) => loadAccountStableTokenBalance(),
+    {
+      immediate: true,
+    }
+  );
 
   return {
     activeAccountStableTokenBalance,

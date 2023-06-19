@@ -1,51 +1,36 @@
 <template>
     <div>
         <div v-if="contractsLoaded">
-            <account-overview />
-            <account-positions />
+            <AccountOverview />
+            <AccountPositions />
         </div>
-        <div>
-            <v-btn
-                v-if="activeAccount"
+        <div v-if="loadingContracts" class="text-center pt-12">
+            <v-progress-circular
+                indeterminate
                 color="primary"
-                @click="preloadContracts()"
-                :loading="loadingContracts"
-                >Load Contracts</v-btn
-            >
+                class="text-center"
+                size="40"
+            ></v-progress-circular>
         </div>
-
-        <pre>
-          {{ activeAccount }}
-        </pre>
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import AccountOverview from "@/components/AccountOverview.vue";
 import AccountPositions from "@/components/AccountPositions.vue";
-import { onMounted } from "vue";
-import { useAeppSdk, useLqty } from "@/composables";
+import { useAeppSdk } from "@/composables";
+export default {
+    components: {
+        AccountOverview,
+        AccountPositions,
+    },
+    setup() {
+        const { contractsLoaded, loadingContracts } = useAeppSdk();
 
-const { aeSdk, activeAccount } = useAeppSdk();
-const { contracts, contractsLoaded, loadingContracts, preloadContracts } =
-    useLqty();
-
-onMounted(async () => {
-    console.log("===========");
-    console.log("contracts:: ", contracts);
-    console.log("===========");
-
-    // const accounts = aeSdk.accounts;
-    // console.info("========================");
-    // console.info("accounts ::", accounts);
-    // console.info("========================");
-
-    // const balance = await aeSdk.getBalance(
-    //     "ak_f9bmi44rdvUGKDsTLp3vMCMLMvvqsMQVWyc3XDAYECmCXEbzy"
-    // );
-
-    // console.info("========================");
-    // console.info("balance ::", balance);
-    // console.info("========================");
-});
+        return {
+            contractsLoaded,
+            loadingContracts,
+        };
+    },
+};
 </script>

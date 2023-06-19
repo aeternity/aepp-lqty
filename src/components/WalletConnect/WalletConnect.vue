@@ -1,29 +1,38 @@
  <template>
     <div>
         <v-btn
-            v-if="!connectedWalletInfo"
+            v-if="!walletConnect.walletInfo"
             color="primary"
-            @click="scanForWallets()"
-            :loading="scanningForWallets"
+            @click="onScanForWallets()"
+            :loading="walletConnect.scanningForWallets"
         >
-            <v-img src="../../assets/superhero.png" width="40"/>
+            <v-img src="../../assets/superhero.png" width="40" />
             Connect Wallet
         </v-btn>
     </div>
 </template>
 
 <script lang="ts">
-import { useWalletConnect } from "@/composables";
+import { useWalletConnect } from "@/store/walletConnect";
+import { onMounted } from "vue";
 
 export default {
     setup(props) {
-        const { scanForWallets, scanningForWallets, connectedWalletInfo } =
-            useWalletConnect();
+        const walletConnect = useWalletConnect();
+
+        async function onScanForWallets() {
+            walletConnect.connectWallet();
+        }
+
+        onMounted(() => {
+            if (walletConnect.walletInfo) {
+              walletConnect.connectWallet();
+            }
+        });
 
         return {
-            connectedWalletInfo,
-            scanForWallets,
-            scanningForWallets,
+            walletConnect,
+            onScanForWallets,
         };
     },
 };

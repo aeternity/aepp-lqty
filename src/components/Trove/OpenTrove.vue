@@ -1,10 +1,10 @@
 <template>
     <div>
-        <v-btn color="primary" block @click.prevent="onOpenTroveDialog()">
+        <v-btn color="primary" block @click.prevent="onOpenTroveDialogPress()">
             Open Trove
         </v-btn>
         <v-dialog
-            v-model="openTroveDialog"
+            v-model="isOpenTroveDialogOpen"
             max-width="600px"
             fullscreen
             transition="dialog-left-transition"
@@ -31,21 +31,37 @@
                         <v-text-field
                             label="Borrow Amount"
                             type="number"
-                            v-model="borrowAmount"
+                            v-model="borrow"
                             inn
-                            suffix="AEUSD"
-                        ></v-text-field>
+                            :suffix="AEUSD_TOKEN.symbol"
+                        >
+                        </v-text-field>
+
                         <div class="py-4">
                             <div class="py-2">
-                                <strong> Liquidation Reserve: </strong>
-                                <div>{{ numberFormat(priceFeed) }} AEUSD</div>
+                                <strong>
+                                    Liquidation Reserve:
+                                    <HelpTooltip
+                                        text="A designated fund is allocated to cover the gas expenses of the liquidator in the event that your Trove requires liquidation. This amount will be added to your debt but will be reimbursed if you choose to close your Trove by fully repaying the outstanding net debt."
+                                    />
+                                </strong>
+                                <div>
+                                    {{ stableCoinGasCompensation }}
+                                    {{ AEUSD_TOKEN.symbol }}
+                                </div>
                             </div>
 
                             <div class="py-2">
-                                <strong> Borrow Fee: </strong>
+                                <strong>
+                                    Borrow Fee:
+                                    <HelpTooltip
+                                        text="A one-time fee is deducted from the borrowed amount, which makes it interest-free with no recurring fees."
+                                    />
+                                </strong>
                                 <div class="d-flex align-center">
                                     <div class="pr-2">
-                                        {{ numberFormat(borrowingFee) }} AEUSD
+                                        {{ borrowingFee.prettify(2) }}
+                                        {{ AEUSD_TOKEN.symbol }}
                                         <small>(0.50%)</small>
                                     </div>
                                     <v-progress-circular
@@ -58,10 +74,21 @@
                             </div>
 
                             <div class="py-2">
-                                <strong> Total Debt: </strong>
+                                <strong>
+                                    Total Debt:
+                                    <HelpTooltip
+                                        :text="`Your Trove will hold a total of ${
+                                            AEUSD_TOKEN.symbol
+                                        }, which amounts to ${minNetDebt.prettify(
+                                            2
+                                        )} (excluding the ${stableCoinGasCompensation} ${
+                                            AEUSD_TOKEN.symbol
+                                        } Liquidation Reserve). To reclaim your collateral, you will need to repay this amount.`"
+                                    />
+                                </strong>
                                 <div class="d-flex align-center">
                                     <div class="pr-2">
-                                        {{ numberFormat(totalDebt) }} AEUSD
+                                        {{ totalDebtAmount.prettify(2) }}
                                     </div>
                                     <v-progress-circular
                                         v-if="loadingBorrowingFee"
@@ -72,26 +99,13 @@
                                 </div>
                             </div>
 
-                            <div class="py-2">
-                                <div class="d-flex justify-space-between">
-                                    <strong> Status: </strong>
-                                    <v-chip color="green"> Safe </v-chip>
-                                </div>
-                                <div>Max: ICR. 50%</div>
-                                <v-progress-linear
-                                    model-value="20"
-                                ></v-progress-linear>
-                            </div>
-
-                            <div class="py-2">
-                                <strong> Liquidation Price (AE): </strong>
-                                <div>(TODO)</div>
-                            </div>
+                            <CollateralRatio :value="collateralRatio" />
                         </div>
 
                         <v-btn
+                            :disabled="!canOpenTrove"
                             :loading="loadingOpenTrove"
-                            @click.prevent="openTrove()"
+                            @click.prevent="onOpenTrovePress()"
                             color="primary"
                             block
                         >
@@ -101,7 +115,8 @@
                         <div class="py-4">
                             <v-alert type="warning">
                                 Minimum total debt requirement is
-                                {{ numberFormat(minNetDebt) }} AEUSD
+                                {{ minNetDebt.prettify(2) }}
+                                {{ AEUSD_TOKEN.symbol }}
                             </v-alert>
                         </div>
                     </v-form>
@@ -111,121 +126,177 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
-import { numberFormat } from "@/utils/numbers";
+<script lang="ts">
+import { Decimal, Trove } from "@liquity/lib-base";
+import { computed, onMounted, ref, watch } from "vue";
+import CollateralRatio from "./CollateralRatio.vue";
+import HelpTooltip from "./../common/HelpTooltip.vue";
 
-import { useLqty } from "@/composables/lqty";
-import { useTroveManager } from "@/composables/troveManager";
-import { usePriceFeed } from "@/composables/priceFeed";
-import { useBorrowerOperations } from "@/composables/borrowerOperations";
-import { decimalsPrefix } from "@/utils/numbers";
 import { useAeppSdk } from "@/composables";
-import { createOnAccountObject } from "@/utils";
+import { useBorrowerOperations } from "@/composables/borrowerOperations";
+import { usePriceFeed } from "@/composables/priceFeed";
+import { useTroveManager } from "@/composables/troveManager";
+import { useAccounts } from "@/store/accounts";
+import { AEUSD_TOKEN } from "@/utils";
 
-const { contracts } = useLqty();
-const { aeSdk, activeAccount, onAccount } = useAeppSdk();
-const {
-    getCompositeDebt,
-    loadBorrowingRate,
-    getActualDebtFromComposite,
-    loadActiveTrove,
-} = useTroveManager();
+export default {
+    components: {
+        CollateralRatio,
+        HelpTooltip,
+    },
+    setup() {
+        const accounts = useAccounts();
+        const { contracts, onAccount } = useAeppSdk();
+        const {
+            getCompositeDebt,
+            getBorrowingFee,
+            loadBorrowingRate,
+            loadActiveTrove,
+        } = useTroveManager();
 
-const { loadPriceFeed, priceFeed } = usePriceFeed();
+        const { loadPriceFeed, priceFeed } = usePriceFeed();
 
-const { loadBorrowerOperationsInitialData, minNetDebt } =
-    useBorrowerOperations();
+        const {
+            loadBorrowerOperationsInitialData,
+            minNetDebt,
+            stableCoinGasCompensation,
+        } = useBorrowerOperations();
 
-const openTroveDialog = ref(false);
-const collateral = ref(0);
-const compositeDebt = ref(BigInt(0));
-const borrowAmount = ref(0);
-const totalDebt = ref(BigInt(0));
-const maxFeePercentage = ref("1000000000000000000"); // 18 zeros
+        const isOpenTroveDialogOpen = ref(false);
 
-const loadingBorrowingFee = ref(false);
-const borrowingFee = ref(0);
+        const borrowingFee = ref<Decimal>(Decimal.ZERO);
+        const maxBorrowAmount = ref<Decimal>(Decimal.ZERO);
 
-const loadingOpenTrove = ref(false);
-
-const error = ref();
-
-watch(borrowAmount, async (borrowAmountValue) => {
-    loadingBorrowingFee.value = true;
-
-    borrowingFee.value = (
-        await contracts.TroveManager.methods.get_borrowing_fee(
-            decimalsPrefix(borrowAmountValue)
-        )
-    ).decodedResult;
-
-    compositeDebt.value = await getCompositeDebt(borrowingFee.value);
-    totalDebt.value = compositeDebt.value + decimalsPrefix(borrowAmountValue);
-
-    loadingBorrowingFee.value = false;
-});
-
-function onOpenTroveDialog() {
-    openTroveDialog.value = true;
-}
-
-async function openTrove() {
-    loadingOpenTrove.value = true;
-    const _borrowAmount = decimalsPrefix(borrowAmount.value);
-    // find
-    const compositeDebt = await getCompositeDebt(borrowingFee.value);
-    const totalDebt = compositeDebt + _borrowAmount;
-    const netDebt = await getActualDebtFromComposite(totalDebt);
-    const ICR = BigInt(decimalsPrefix(2));
-    const amount = (_borrowAmount * totalDebt) / priceFeed.value;
-    // const amount = (ICR * totalDebt) / priceFeed.value;
-
-    console.info("========================");
-    console.info("priceFeed ::", priceFeed);
-    console.info("_borrowAmount ::", _borrowAmount);
-    console.info("compositeDebt ::", compositeDebt);
-    console.info("totalDebt ::", totalDebt);
-    console.info("netDebt ::", netDebt);
-    console.info("ICR ::", ICR);
-    console.info("amount ::", amount);
-    console.info("========================");
-
-    // maxFeePercentage, borrowAmount, upperHint, lowerHint, extraParams
-    try {
-        const tx = await contracts.BorrowerOperations.methods.open_trove(
-            maxFeePercentage.value, // maxFeePercentage.value,
-            amount, //borrowAmount.value,
-            activeAccount.value,
-            activeAccount.value,
-            {
-                amount: decimalsPrefix(collateral.value),
-                onAccount: onAccount(),
-                waitMined: false,
-            }
+        const collateral = ref(0);
+        const collateralAmount = computed<Decimal>(() =>
+            Decimal.from(collateral.value ?? 0)
         );
 
-        console.info("========================");
-        console.info("open trove tx ::", tx);
-        console.info("========================");
+        const borrow = ref(0);
+        const borrowAmount = computed<Decimal>(() =>
+            Decimal.from(borrow.value ?? 0)
+        );
 
-        await loadActiveTrove();
-        openTroveDialog.value = false;
-    } catch (_error: any) {
-        error.value = _error.message;
-        console.info("========================");
-        console.error("OPEN TROVE ERROR ::", _error);
-        console.info("========================");
-    }
+        const totalDebt = ref();
+        const totalDebtAmount = computed<Decimal>(() =>
+            Decimal.from(totalDebt.value ?? 0)
+        );
 
-    loadingOpenTrove.value = false;
-}
+        const trove = computed<Trove>(
+            () => new Trove(collateralAmount.value, totalDebtAmount.value)
+        );
 
-onMounted(() => {
-    loadPriceFeed();
-    loadBorrowingRate();
-    loadBorrowerOperationsInitialData();
-});
+        const collateralRatio = computed(() =>
+            !collateralAmount.value.isZero && !borrowAmount.value.isZero
+                ? trove.value.collateralRatio(priceFeed.value.toString())
+                : Decimal.ZERO
+        );
+
+        const maxFeePercentage = ref<Decimal>(Decimal.from(1)); // 18 zeros
+
+        const loadingBorrowingFee = ref(false);
+
+        const loadingOpenTrove = ref(false);
+
+        const error = ref();
+
+        const canOpenTrove = computed(
+            (): boolean =>
+                minNetDebt.value.lt(borrowAmount.value) &&
+                !collateralRatio.value.lte(1.1)
+        );
+
+        watch(borrowAmount, async (borrowAmountValue) => {
+            loadingBorrowingFee.value = true;
+
+            borrowingFee.value = await getBorrowingFee(borrowAmountValue);
+
+            totalDebt.value = (await getCompositeDebt(borrowingFee.value))
+                .add(borrowAmountValue)
+                .toString();
+
+            loadingBorrowingFee.value = false;
+        }, {  });
+
+        watch(collateral, async () => {
+            maxBorrowAmount.value = await getCompositeDebt(
+                collateralAmount.value
+            );
+        });
+
+        function onOpenTroveDialogPress() {
+            isOpenTroveDialogOpen.value = true;
+        }
+
+        async function onOpenTrovePress() {
+            loadingOpenTrove.value = true;
+            try {
+                const tx =
+                    await contracts.BorrowerOperations.methods.open_trove(
+                        maxFeePercentage.value.bigNumber, // maxFeePercentage.value,
+                        borrowAmount.value.bigNumber, //borrowAmount.value,
+                        accounts.activeAccount,
+                        accounts.activeAccount,
+                        {
+                            amount: collateralAmount.value.bigNumber,
+                            onAccount: onAccount(),
+                            waitMined: false,
+                        }
+                    );
+
+                console.info("========================");
+                console.info("open trove tx ::", tx);
+                console.info("========================");
+
+                await loadActiveTrove();
+                isOpenTroveDialogOpen.value = false;
+            } catch (_error: any) {
+                error.value = _error.message;
+                console.info("========================");
+                console.error("OPEN TROVE ERROR ::", _error);
+                console.info("========================");
+            }
+
+            loadingOpenTrove.value = false;
+        }
+
+        onMounted(() => {
+            loadPriceFeed();
+            loadBorrowingRate();
+            loadBorrowerOperationsInitialData();
+        });
+
+        return {
+            AEUSD_TOKEN,
+
+            loadingBorrowingFee,
+            loadingOpenTrove,
+
+            minNetDebt,
+            stableCoinGasCompensation,
+
+            totalDebtAmount,
+            borrowingFee,
+            priceFeed,
+            borrowAmount,
+
+            collateral,
+            borrow,
+            collateralRatio,
+
+            error,
+
+            maxBorrowAmount,
+
+            isOpenTroveDialogOpen,
+
+            canOpenTrove,
+
+            onOpenTroveDialogPress,
+            onOpenTrovePress,
+        };
+    },
+};
 </script>
 
 <style>
