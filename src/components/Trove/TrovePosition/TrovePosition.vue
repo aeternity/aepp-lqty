@@ -5,11 +5,15 @@
                 <v-card-text class="d-flex align-center">
                     <div class="d-flex align-center">
                         <img
-                            src="../../assets/tokens/ae.svg"
+                            src="../../../assets/tokens/ae.svg"
                             class="token-icon"
                         />
                         <div class="text-h6 pl-4">
-                            {{ aettosToAe(activeTrove.coll) }}
+                            {{
+                                Decimal.fromBigNumberString(
+                                    activeTrove.coll
+                                ).prettify(2)
+                            }}
                         </div>
                     </div>
                     <v-spacer />
@@ -27,13 +31,19 @@
             <v-card>
                 <v-card-text class="d-flex">
                     <div class="d-flex align-center">
-                        <img
-                            src="../../assets/tokens/lusd.svg"
-                            class="token-icon"
-                        />
+                        <v-avatar start>
+                            <v-img
+                                :src="`https://avatars.z52da5wt.xyz/${AEUSD_TOKEN.contractAddress}`"
+                                class="token-icon"
+                            />
+                        </v-avatar>
                         <div class="text-h6 pl-4">
-                            {{ numberFormat(activeTrove.debt) }}
-                            AEUSD
+                            {{
+                                Decimal.fromBigNumberString(
+                                    activeTrove.debt
+                                ).prettify(2)
+                            }}
+                            {{ AEUSD_TOKEN.symbol }}
                         </div>
                     </div>
                     <v-spacer />
@@ -54,16 +64,37 @@
     </v-row>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { useTroveManager } from "@/composables/troveManager";
-import { aettosToAe, numberFormat } from "@/utils/numbers";
+import { aettosToAe, numberFormat, AEUSD_TOKEN } from "@/utils";
 import CollateralSupply from "./CollateralSupply.vue";
 import CollateralWithdraw from "./CollateralWithdraw.vue";
 import PayBackStableCoin from "./PayBackStableCoin.vue";
 import BorrowStableCoin from "./BorrowStableCoin.vue";
 import CloseTrove from "./CloseTrove.vue";
+import { Decimal } from "@liquity/lib-base";
 
-const { loadActiveTrove, activeTrove } = useTroveManager();
+export default {
+    name: "TrovePosition",
+    components: {
+        CollateralSupply,
+        CollateralWithdraw,
+        PayBackStableCoin,
+        BorrowStableCoin,
+        CloseTrove,
+    },
+    setup() {
+        const { loadActiveTrove, activeTrove } = useTroveManager();
+        return {
+            AEUSD_TOKEN,
+            Decimal,
+
+            activeTrove,
+            aettosToAe,
+            numberFormat,
+        };
+    },
+};
 </script>
 
 <style scoped>

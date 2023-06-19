@@ -1,18 +1,40 @@
-import { ref } from "vue";
-import { useLqty } from "./lqty";
+import { useAccounts } from "@/store/accounts";
+import { ref, watch } from "vue";
 import { useAeppSdk } from "./aeppSdk";
+import { Decimal } from "@liquity/lib-base";
 
 const loadingBorrowingRate = ref(false);
 const borrowingRate = ref(0);
 
 const activeTrove = ref();
 export function useTroveManager() {
-  const { contracts } = useLqty();
-  const { activeAccount } = useAeppSdk();
+  const accounts = useAccounts();
+  const { contracts } = useAeppSdk();
 
-  async function getCompositeDebt(dept: any) {
-    return (await contracts.TroveManager.methods.get_composite_debt(dept))
-      .decodedResult;
+  async function getCompositeDebt(dept: Decimal): Promise<Decimal> {
+    return Decimal.fromBigNumberString(
+      (
+        await contracts.TroveManager.methods.get_composite_debt(dept)
+      ).decodedResult.toString()
+    );
+  }
+
+  async function getActualDebtFromComposite(dept: Decimal): Promise<Decimal> {
+    return Decimal.fromBigNumberString(
+      (
+        await contracts.TroveManager.methods.get_actual_debt_from_composite(
+          dept
+        )
+      ).decodedResult
+    );
+  }
+
+  async function getBorrowingFee(borrowAmount: Decimal): Promise<Decimal> {
+    return Decimal.from(
+      (
+        await contracts.TroveManager.methods.get_borrowing_fee(borrowAmount)
+      ).decodedResult.toString()
+    );
   }
 
   async function loadBorrowingRate() {
@@ -25,30 +47,29 @@ export function useTroveManager() {
     loadingBorrowingRate.value = false;
   }
 
-  async function getActualDebtFromComposite(dept: any) {
-    return (
-      await contracts.TroveManager.methods.get_actual_debt_from_composite(dept)
-    ).decodedResult;
-  }
-
   async function loadActiveTrove() {
-    console.info("========================");
-    console.info("loadActiveTrove ::", activeAccount.value);
-    console.info("========================");
     const { decodedResult } = await contracts.TroveManager.methods.troves(
-      activeAccount.value
+      accounts.activeAccount
     );
 
-    console.info("========================");
-    console.info("troves.value ::", decodedResult);
-    console.info("========================");
     activeTrove.value = decodedResult;
   }
 
+  watch(
+    () => accounts.activeAccount,
+    (account: string, oldAccount: string) => {
+      if (account && account !== oldAccount) {
+        loadActiveTrove();
+      }
+    }
+  );
+
   return {
-    getCompositeDebt,
     loadBorrowingRate,
+
     getActualDebtFromComposite,
+    getBorrowingFee,
+    getCompositeDebt,
 
     loadActiveTrove,
     activeTrove,

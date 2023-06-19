@@ -2,10 +2,10 @@
     <div class="py-4">
         <div class="mb-8">
             <div v-if="!activeTrove || !activeTrove.coll">
-                <open-trove />
+                <OpenTrove />
             </div>
             <div v-else>
-                <trove-position />
+                <TrovePosition />
             </div>
         </div>
     </div>
@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import { useTroveManager } from "@/composables/troveManager";
 import OpenTrove from "./OpenTrove.vue";
-import TrovePosition from "../TrovePosition/TrovePosition.vue";
+import TrovePosition from "./TrovePosition/TrovePosition.vue";
 import { watch } from "vue";
 import { useAeppSdk } from "@/composables";
 

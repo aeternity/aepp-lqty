@@ -13,16 +13,32 @@
 
             <v-window v-model="activeTab">
                 <v-window-item value="troveManager">
-                    <trove-manager />
+                    <TroveManager />
+                </v-window-item>
+                <v-window-item value="stabilityPool">
+                    <TroveManager />
+                </v-window-item>
+                <v-window-item value="stacking">
+                    <TroveManager />
                 </v-window-item>
             </v-window>
         </v-col>
     </v-row>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { ref } from "vue";
 import TroveManager from "./Trove/TroveManager.vue";
 
-const activeTab = ref("troveManager");
+export default {
+    components: {
+        TroveManager,
+    },
+    setup() {
+        const activeTab = ref("troveManager");
+        return {
+            activeTab,
+        };
+    },
+};
 </script>

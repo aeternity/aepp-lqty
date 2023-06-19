@@ -1,26 +1,22 @@
+import { Decimal } from "@liquity/lib-base";
 import { ref } from "vue";
-import { useLqty } from "./lqty";
 
-const loadingPriceFeed = ref(false);
-const priceFeed = ref(0);
+import { useAeppSdk } from "./aeppSdk";
+
+const priceFeed = ref<Decimal>(Decimal.ZERO);
 
 export function usePriceFeed() {
-  const { contracts } = useLqty();
+  const { contracts } = useAeppSdk();
 
   async function loadPriceFeed() {
-    loadingPriceFeed.value = true;
-
-    priceFeed.value = (
-      await contracts.PriceFeedTestnet.methods.get_price()
-    ).decodedResult;
-
-    loadingPriceFeed.value = false;
+    priceFeed.value = Decimal.fromBigNumberString(
+      (await contracts.PriceFeedTestnet.methods.get_price()).decodedResult
+    );
   }
 
   return {
     loadPriceFeed,
 
     priceFeed,
-    loadingPriceFeed,
   };
 }

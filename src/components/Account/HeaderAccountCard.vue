@@ -1,54 +1,69 @@
 <template>
-    <div v-if="activeAccount" class="d-flex align-center px-4">
-        <v-chip>
+    <div v-if="accounts.activeAccount" class="d-flex align-center px-4">
+        <v-chip @click="accountDetailDialog = true">
             <v-avatar start>
-                <v-img :src="`https://avatars.z52da5wt.xyz/${activeAccount}`" />
+                <v-img
+                    :src="`https://avatars.z52da5wt.xyz/${accounts.activeAccount}`"
+                />
             </v-avatar>
 
-            {{ formatAddress(activeAccount) }}
+            {{ formatAddress(accounts.activeAccount) }}
         </v-chip>
 
-        <div class="pl-4">
-            {{ aettosToAe(balance) }}
+        <div class="pl-4" v-if="!balances.balance?.isZero">
+            {{ balances.balance.prettify(2) }} AE
         </div>
+
+        <v-dialog v-model="accountDetailDialog" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    {{ formatAddress(accounts.activeAccount) }}
+                </v-card-title>
+                <v-card-text>
+                    <div>
+                        <strong>Wallet:</strong> {{ wallet.walletInfo?.name }}
+                    </div>
+
+                    <div>
+                        <strong>Network ID:</strong>
+                        {{ wallet.walletInfo?.networkId }}
+                    </div>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="red" @click="wallet.disconnectWallet()">
+                        Disconnect
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
 <script lang="ts">
-import { useAeppSdk, useBalances } from "@/composables";
-import { formatAddress, aettosToAe } from "@/utils";
+import { useAccounts } from "@/store/accounts";
+import { useBalances } from "@/store/balances";
+import { useWalletConnect } from "@/store/walletConnect";
+import { formatAddress } from "@/utils";
+import { ref } from "vue";
 
 export default {
     name: "HeaderAccountCard",
     setup() {
-        const { activeAccount } = useAeppSdk();
-        const { balance } = useBalances();
+        const accounts = useAccounts();
+        const balances = useBalances();
+        const wallet = useWalletConnect();
+
+        const accountDetailDialog = ref(false);
 
         return {
-            balance,
+            balances,
+            wallet,
+            accounts,
+
+            accountDetailDialog,
+
             formatAddress,
-            activeAccount,
-            aettosToAe,
         };
     },
 };
-
-// import useAeSdk from "@/composables/aeSdk";
-// import { onMounted, ref } from "vue";
-// import { aettosToAe } from "@/utils/numbers";
-// const { aeSdk, activeAccount, accounts, onSelectAccount } = useAeSdk();
-// const balance = ref(BigInt(0));
-
-// function formatAddress(address: string) {
-//     return `${address.slice(0, 7)}...${address.slice(-4)}`;
-// }
-
-// async function loadBalance() {
-//     balance.value = await aeSdk.getBalance(activeAccount.value);
-// }
-
-// onMounted(async () => {
-//     loadBalance();
-//     setInterval(loadBalance, 5000);
-// });
 </script>

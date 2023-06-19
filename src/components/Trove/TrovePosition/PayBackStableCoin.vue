@@ -34,17 +34,17 @@
 
 <script lang="ts" setup>
 import { useAeppSdk } from "@/composables";
-import { useLqty } from "@/composables/lqty";
 import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
+import { useAccounts } from "@/store/accounts";
 import { decimalsPrefix } from "@/utils/numbers";
 import { ref } from "vue";
 const dialogOpen = ref(false);
 const amount = ref(0);
 const error = ref("");
 
-const { activeAccount, onAccount } = useAeppSdk();
-const { contracts } = useLqty();
+const accounts = useAccounts();
+const { contracts, onAccount } = useAeppSdk();
 const { loadActiveTrove } = useTroveManager();
 const { loadAccountStableTokenBalance } = useStableToken();
 
@@ -56,10 +56,10 @@ async function payBack() {
     try {
         await contracts.BorrowerOperations.methods.repay_aeusd(
             decimalsPrefix(amount.value),
-            activeAccount.value,
-            activeAccount.value,
+            accounts.activeAccount,
+            accounts.activeAccount,
             {
-              onAccount: onAccount(),
+                onAccount: onAccount(),
             }
         );
         await loadActiveTrove();
