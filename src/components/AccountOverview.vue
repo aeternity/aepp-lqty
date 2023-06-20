@@ -3,7 +3,7 @@
         <v-col cols="12">
             <h2>Overview</h2>
         </v-col>
-        <v-col cols="6">
+        <v-col md="6">
             <v-card>
                 <v-card-title>
                     {{ activeAccountStableTokenBalance?.prettify(2) }}
@@ -15,21 +15,21 @@
             </v-card>
         </v-col>
 
-        <v-col cols="6">
+        <v-col md="6">
             <v-card>
                 <v-card-title> 0.50% </v-card-title>
                 <v-card-text> Borrow Fee </v-card-text>
             </v-card>
         </v-col>
 
-        <v-col cols="6">
+        <v-col md="6">
             <v-card>
                 <v-card-title> TODO </v-card-title>
                 <v-card-text> D / C (%) </v-card-text>
             </v-card>
         </v-col>
 
-        <v-col cols="6">
+        <v-col md="6">
             <v-card>
                 <v-card-title> TODO </v-card-title>
                 <v-card-text> Liquidation (AE) </v-card-text>

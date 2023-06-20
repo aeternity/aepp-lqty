@@ -23,8 +23,8 @@
         <div>
             Max: ICR.
             <strong :class="[!value?.eq(0) && `text-${progressColor}`]">
-                {{ collateralRatioPct.prettify() }}</strong
-            >
+              {{ collateralRatioPct.prettify() }}
+            </strong>
         </div>
         <v-progress-linear
             :color="!value?.eq(0) ? progressColor : 'muted'"

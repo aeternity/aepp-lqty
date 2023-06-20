@@ -36,7 +36,7 @@
 import { useAeppSdk } from "@/composables";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
-import { decimalsPrefix } from "@/utils/numbers";
+import { Decimal } from "@liquity/lib-base";
 import { ref } from "vue";
 
 export default {
@@ -56,7 +56,7 @@ export default {
             loadingWithdraw.value = true;
             try {
                 await contracts.BorrowerOperations.methods.withdraw_coll(
-                    decimalsPrefix(amount.value),
+                    Decimal.from(amount.value).bigNumber,
                     accounts.activeAccount,
                     accounts.activeAccount,
                     {

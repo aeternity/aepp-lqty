@@ -37,7 +37,8 @@ import { useAeppSdk } from "@/composables";
 import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
-import { decimalsPrefix } from "@/utils/numbers";
+import { Decimal } from "@liquity/lib-base";
+
 import { ref } from "vue";
 const dialogOpen = ref(false);
 const amount = ref(0);
@@ -55,7 +56,7 @@ async function payBack() {
     loadingPayBack.value = true;
     try {
         await contracts.BorrowerOperations.methods.repay_aeusd(
-            decimalsPrefix(amount.value),
+            Decimal.from(amount.value).bigNumber,
             accounts.activeAccount,
             accounts.activeAccount,
             {

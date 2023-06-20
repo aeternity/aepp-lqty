@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col cols="6">
+        <v-col md="6">
             <v-card>
                 <v-card-text class="d-flex align-center">
                     <div class="d-flex align-center">
@@ -27,7 +27,7 @@
                 </v-card-actions>
             </v-card>
         </v-col>
-        <v-col cols="6">
+        <v-col md="6">
             <v-card>
                 <v-card-text class="d-flex">
                     <div class="d-flex align-center">
@@ -58,7 +58,7 @@
             </v-card>
         </v-col>
 
-        <v-col cols="6">
+        <v-col md="6">
             <close-trove />
         </v-col>
     </v-row>
@@ -66,13 +66,13 @@
 
 <script lang="ts">
 import { useTroveManager } from "@/composables/troveManager";
-import { aettosToAe, numberFormat, AEUSD_TOKEN } from "@/utils";
+import { AEUSD_TOKEN } from "@/utils";
+import { Decimal } from "@liquity/lib-base";
+import BorrowStableCoin from "./BorrowStableCoin.vue";
+import CloseTrove from "./CloseTrove.vue";
 import CollateralSupply from "./CollateralSupply.vue";
 import CollateralWithdraw from "./CollateralWithdraw.vue";
 import PayBackStableCoin from "./PayBackStableCoin.vue";
-import BorrowStableCoin from "./BorrowStableCoin.vue";
-import CloseTrove from "./CloseTrove.vue";
-import { Decimal } from "@liquity/lib-base";
 
 export default {
     name: "TrovePosition",
@@ -84,14 +84,12 @@ export default {
         CloseTrove,
     },
     setup() {
-        const { loadActiveTrove, activeTrove } = useTroveManager();
+        const { activeTrove } = useTroveManager();
         return {
             AEUSD_TOKEN,
             Decimal,
 
             activeTrove,
-            aettosToAe,
-            numberFormat,
         };
     },
 };

@@ -32,9 +32,8 @@
 import { useAeppSdk } from "@/composables";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
-import { decimalsPrefix } from "@/utils/numbers";
-import { ref } from "vue";
 import { Decimal } from "@liquity/lib-base";
+import { ref } from "vue";
 
 export default {
     setup() {
@@ -54,7 +53,7 @@ export default {
                     accounts.activeAccount,
                     accounts.activeAccount,
                     {
-                        amount: decimalsPrefix(amount.value),
+                        amount: Decimal.from(amount.value).bigNumber,
                         onAccount: onAccount(),
                     }
                 );

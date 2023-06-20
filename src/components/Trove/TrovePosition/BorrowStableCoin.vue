@@ -37,6 +37,7 @@ import { useAeppSdk } from "@/composables";
 import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
+import { AEUSD_TOKEN } from '@/utils';
 import { Decimal } from '@liquity/lib-base';
 import { ref } from "vue";
 
@@ -88,6 +89,8 @@ export default {
             loadingBorrow,
             borrow,
             openDialog,
+
+            AEUSD_TOKEN,
         };
     },
 };

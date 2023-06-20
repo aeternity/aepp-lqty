@@ -10,8 +10,8 @@
         <div>
           (Only Testnet is supported)
         </div>
-        <wallet-connect />
-        <header-account-card />
+        <WalletConnect />
+        <HeaderAccountCard />
     </v-app-bar>
 </template>
 

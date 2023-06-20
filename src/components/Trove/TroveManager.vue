@@ -13,16 +13,16 @@
 
 <script lang="ts" setup>
 import { useTroveManager } from "@/composables/troveManager";
+import { useAccounts } from "@/store/accounts";
+import { watch } from "vue";
 import OpenTrove from "./OpenTrove.vue";
 import TrovePosition from "./TrovePosition/TrovePosition.vue";
-import { watch } from "vue";
-import { useAeppSdk } from "@/composables";
 
 const { loadActiveTrove, activeTrove } = useTroveManager();
-const { activeAccount } = useAeppSdk();
+const accounts = useAccounts();
 
 watch(
-    activeAccount,
+    () => accounts.activeAccount,
     async () => {
         await loadActiveTrove();
     },
