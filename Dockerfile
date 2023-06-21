@@ -11,5 +11,5 @@ COPY . .
 RUN npm install
 
 # Specify the command to run the application
-CMD ["npm", "run", "dev", "--host", "0.0.0.0"]
+CMD ["npm", "run", "dev", "--host", "0.0.0.0", "--port", "3000"]
 
