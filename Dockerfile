@@ -4,9 +4,6 @@ FROM node:16
 # Set the working directory
 WORKDIR /app
 
-# Install yarn
-RUN npm install -g yarn
-
 # Copy the entire project to the working directory
 COPY . .
 
