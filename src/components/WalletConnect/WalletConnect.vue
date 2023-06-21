@@ -17,7 +17,7 @@ import { useWalletConnect } from "@/store/walletConnect";
 import { onMounted } from "vue";
 
 export default {
-    setup(props) {
+    setup() {
         const walletConnect = useWalletConnect();
 
         async function onScanForWallets() {

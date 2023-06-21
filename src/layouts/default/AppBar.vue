@@ -7,15 +7,20 @@
         </v-app-bar-title>
 
         <v-spacer />
-        <div>
-          (Only Testnet is supported)
-        </div>
+
         <WalletConnect />
         <HeaderAccountCard />
     </v-app-bar>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import HeaderAccountCard from "@/components/Account/HeaderAccountCard.vue";
 import WalletConnect from "@/components/WalletConnect/WalletConnect.vue";
+
+export default {
+    components: {
+        HeaderAccountCard,
+        WalletConnect,
+    },
+};
 </script>

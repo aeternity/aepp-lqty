@@ -57,7 +57,7 @@ export function useAeppSdk() {
         }
       },
       onAddressChange: accounts.setActiveAccount,
-      onDisconnect: (params) => {
+      onDisconnect: () => {
         accounts.setActiveAccount(undefined);
         accounts.setAccounts([]);
         contractsLoaded.value = false;

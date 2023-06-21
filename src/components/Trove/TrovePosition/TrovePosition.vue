@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col md="6">
+        <v-col cols="12" md="6">
             <v-card>
                 <v-card-text class="d-flex align-center">
                     <div class="d-flex align-center">
@@ -21,13 +21,13 @@
                 </v-card-text>
                 <v-divider />
                 <v-card-actions>
-                    <collateral-supply />
+                    <CollateralSupply />
                     <v-spacer />
-                    <collateral-withdraw />
+                    <CollateralWithdraw />
                 </v-card-actions>
             </v-card>
         </v-col>
-        <v-col md="6">
+        <v-col cols="12" md="6">
             <v-card>
                 <v-card-text class="d-flex">
                     <div class="d-flex align-center">
@@ -51,15 +51,15 @@
                 </v-card-text>
                 <v-divider />
                 <v-card-actions>
-                    <borrow-stable-coin />
+                    <BorrowStableCoin />
                     <v-spacer />
-                    <pay-back-stable-coin />
+                    <PayBackStableCoin />
                 </v-card-actions>
             </v-card>
         </v-col>
 
-        <v-col md="6">
-            <close-trove />
+        <v-col cols="12" md="6">
+            <CloseTrove />
         </v-col>
     </v-row>
 </template>
@@ -75,7 +75,6 @@ import CollateralWithdraw from "./CollateralWithdraw.vue";
 import PayBackStableCoin from "./PayBackStableCoin.vue";
 
 export default {
-    name: "TrovePosition",
     components: {
         CollateralSupply,
         CollateralWithdraw,

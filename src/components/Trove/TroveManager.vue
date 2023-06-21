@@ -11,21 +11,32 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
 import { watch } from "vue";
 import OpenTrove from "./OpenTrove.vue";
 import TrovePosition from "./TrovePosition/TrovePosition.vue";
 
-const { loadActiveTrove, activeTrove } = useTroveManager();
-const accounts = useAccounts();
-
-watch(
-    () => accounts.activeAccount,
-    async () => {
-        await loadActiveTrove();
+export default {
+    components: {
+        OpenTrove,
+        TrovePosition,
     },
-    { immediate: true }
-);
+    setup() {
+        const { loadActiveTrove, activeTrove } = useTroveManager();
+        const accounts = useAccounts();
+
+        watch(
+            () => accounts.activeAccount,
+            async () => {
+                await loadActiveTrove();
+            },
+            { immediate: true }
+        );
+        return {
+            activeTrove,
+        };
+    },
+};
 </script>

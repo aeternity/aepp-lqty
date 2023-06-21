@@ -1,5 +1,5 @@
 import { useAccounts } from "@/store/accounts";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useAeppSdk } from "./aeppSdk";
 import { Decimal } from "@liquity/lib-base";
 
@@ -54,15 +54,6 @@ export function useTroveManager() {
 
     activeTrove.value = decodedResult;
   }
-
-  watch(
-    () => accounts.activeAccount,
-    (account: string, oldAccount: string) => {
-      if (account && account !== oldAccount) {
-        loadActiveTrove();
-      }
-    }
-  );
 
   return {
     loadBorrowingRate,

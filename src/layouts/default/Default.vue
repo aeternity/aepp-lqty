@@ -1,15 +1,22 @@
 <template>
-  <v-app>
-    <default-bar />
-    <left-side-bar/>
+    <v-app>
+        <default-bar />
+        <left-side-bar />
 
-    <default-view />
-  </v-app>
+        <default-view />
+    </v-app>
 </template>
 
-<script lang="ts" setup>
-  import DefaultBar from './AppBar.vue'
-  import LeftSideBar from './LeftSideBar.vue'
-  import RightSideBar from './RightSideBar.vue'
-  import DefaultView from './View.vue'
+<script lang="ts">
+import DefaultBar from "./AppBar.vue";
+import LeftSideBar from "./LeftSideBar.vue";
+import DefaultView from "./View.vue";
+
+export default {
+    components: {
+        DefaultBar,
+        LeftSideBar,
+        DefaultView,
+    },
+};
 </script>

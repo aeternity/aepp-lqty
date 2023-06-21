@@ -19,7 +19,7 @@ export function useStableToken() {
 
   watch(
     () => accounts.activeAccount,
-    async (address) => loadAccountStableTokenBalance(),
+    () => loadAccountStableTokenBalance(),
     {
       immediate: true,
     }

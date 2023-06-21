@@ -16,7 +16,7 @@
                     <TroveManager />
                 </v-window-item>
                 <v-window-item value="stabilityPool">
-                    <TroveManager />
+                    <StabilityPool />
                 </v-window-item>
                 <v-window-item value="stacking">
                     <TroveManager />
@@ -29,13 +29,15 @@
 <script lang="ts">
 import { ref } from "vue";
 import TroveManager from "./Trove/TroveManager.vue";
+import StabilityPool from "./StabilityPool/StabilityPool.vue";
 
 export default {
     components: {
         TroveManager,
+        StabilityPool,
     },
     setup() {
-        const activeTab = ref("troveManager");
+        const activeTab = ref("stabilityPool");
         return {
             activeTab,
         };

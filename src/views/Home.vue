@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="contractsLoaded && false">
+        <div v-if="contractsLoaded">
             <AccountOverview />
             <AccountPositions />
         </div>
