@@ -11,4 +11,5 @@ COPY . .
 RUN yarn install
 
 # Specify the command to run the application
-CMD ["/usr/local/bin/yarn", "run", "dev", "--host", "0.0.0.0"]
+CMD ["yarn", "dev", "--host", "0.0.0.0"]
+
