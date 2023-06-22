@@ -11,7 +11,7 @@ export function useTroveManager() {
   const accounts = useAccounts();
   const { contracts } = useAeppSdk();
 
-  async function getCompositeDebt(dept: Decimal): Promise<Decimal> {
+  async function getCompositeDebt(dept: Decimal | any): Promise<Decimal> {
     return Decimal.fromBigNumberString(
       (
         await contracts.TroveManager.methods.get_composite_debt(dept)

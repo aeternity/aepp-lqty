@@ -4,14 +4,17 @@ FROM node:16
 # Set the working directory
 WORKDIR /app
 
-# Copy the entire project to the working directory
-COPY . .
+# Copy the package.json and package-lock.json files to the working directory
+COPY package*.json ./
 
-# Install dependencies
+# Install project dependencies
 RUN npm install
 
+# Copy all project files to the working directory
+COPY . .
+
+# Expose the port that your Vue application is running on
 EXPOSE 3000
 
-# Specify the command to run the application
+# Start the Vue application
 CMD ["npm", "run", "dev"]
-

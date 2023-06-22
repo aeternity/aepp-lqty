@@ -27,5 +27,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "vite.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
   ]
 }
