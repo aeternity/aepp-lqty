@@ -28,8 +28,8 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import TroveManager from "./Trove/TroveManager.vue";
-import StabilityPool from "./StabilityPool/StabilityPool.vue";
+import TroveManager from "@/components/Liquity/Trove/TroveManager.vue";
+import StabilityPool from "@/components/Liquity/StabilityPool/StabilityPool.vue";
 
 export default {
     components: {

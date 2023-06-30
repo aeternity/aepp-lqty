@@ -1,8 +1,8 @@
 <template>
     <div>
+        <AccountOverview />
         <div v-if="contractsLoaded">
-            <AccountOverview />
-            <AccountPositions />
+            <LiquityPositions />
         </div>
         <div v-if="loadingContracts" class="text-center pt-12">
             <v-progress-circular
@@ -17,12 +17,13 @@
 
 <script lang="ts">
 import AccountOverview from "@/components/AccountOverview.vue";
-import AccountPositions from "@/components/AccountPositions.vue";
+import LiquityPositions from "@/components/Liquity/LiquityPositions.vue";
+
 import { useAeppSdk } from "@/composables";
 export default {
     components: {
         AccountOverview,
-        AccountPositions,
+        LiquityPositions,
     },
     setup() {
         const { contractsLoaded, loadingContracts } = useAeppSdk();

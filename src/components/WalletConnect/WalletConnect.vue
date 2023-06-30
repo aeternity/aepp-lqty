@@ -1,15 +1,13 @@
  <template>
-    <div>
-        <v-btn
-            v-if="!walletConnect.walletInfo"
-            color="primary"
-            @click="onScanForWallets()"
-            :loading="walletConnect.scanningForWallets"
-        >
-            <v-img src="../../assets/superhero.png" width="40" />
-            Connect Wallet
-        </v-btn>
-    </div>
+    <v-btn
+        v-if="!walletConnect.walletInfo"
+        color="primary"
+        @click="onScanForWallets()"
+        :loading="walletConnect.scanningForWallets"
+    >
+        <v-img src="../../assets/superhero.png" width="40" />
+        Connect Wallet
+    </v-btn>
 </template>
 
 <script lang="ts">
@@ -26,7 +24,7 @@ export default {
 
         onMounted(() => {
             if (walletConnect.walletInfo) {
-              walletConnect.connectWallet();
+                walletConnect.connectWallet();
             }
         });
 

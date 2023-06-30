@@ -129,8 +129,8 @@
 <script lang="ts">
 import { Decimal, Trove } from "@liquity/lib-base";
 import { computed, onMounted, ref, watch } from "vue";
-import HelpTooltip from "./../Common/HelpTooltip.vue";
-import CollateralRatio from "./CollateralRatio.vue";
+import HelpTooltip from "@/components/Common/HelpTooltip.vue";
+import CollateralRatio from "@/components/Liquity/Shared/CollateralRatio.vue";
 
 import { useAeppSdk } from "@/composables";
 import { useBorrowerOperations } from "@/composables/borrowerOperations";
