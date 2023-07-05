@@ -5,7 +5,7 @@
                 <v-card-text class="d-flex align-center">
                     <div class="d-flex align-center">
                         <img
-                            src="../../../assets/tokens/ae.svg"
+                            src="@/assets/tokens/ae.svg"
                             class="token-icon"
                         />
                         <div class="text-h6 pl-4">

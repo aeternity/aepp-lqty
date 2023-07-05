@@ -37,9 +37,12 @@ export const useWalletConnect = defineStore(
       }
 
       const aeSdk = await getSdk();
-      walletInfo.value = await aeSdk.connectToWallet(wallet.getConnection());
+      const _walletInfo = await aeSdk.connectToWallet(wallet.getConnection());
       await aeSdk.subscribeAddress(SUBSCRIPTION_TYPES.subscribe, "current");
       await scanForAccounts();
+
+
+      walletInfo.value = _walletInfo;
 
       await preloadContracts();
     }
@@ -75,7 +78,9 @@ export const useWalletConnect = defineStore(
           resolve(newWallet);
         };
 
-        const scannerConnection = new BrowserWindowMessageConnection();
+        const scannerConnection = new BrowserWindowMessageConnection({
+          debug: true
+        });
         const stopScan = walletDetector(scannerConnection, handleWallets);
       });
 
