@@ -20,6 +20,7 @@
                     </v-avatar>
 
                     {{ formatAddress(activeAccount) }}
+                    <v-icon>mdi-chevron-down</v-icon>
                 </v-chip>
             </template>
             <v-list>

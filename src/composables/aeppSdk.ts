@@ -1,6 +1,7 @@
 import { useAccounts } from "@/store/accounts";
 import { watchUntilTruthy } from "@/utils";
 import { AeSdkAepp, Node } from "@aeternity/aepp-sdk";
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 let aeSdk: AeSdkAepp;
@@ -11,18 +12,19 @@ const contractsLoaded = ref(false);
 const scanningForAccounts = ref(false);
 
 export function useAeppSdk() {
-  const accounts = useAccounts();
+  const { setAccounts, setActiveAccount } = useAccounts();
+  const { activeAccount } = storeToRefs(useAccounts());
 
   async function scanForAccounts() {
     scanningForAccounts.value = true;
-    accounts.setAccounts(await aeSdk.askAddresses());
-    accounts.setActiveAccount(aeSdk._accounts);
+    setAccounts(await aeSdk.askAddresses());
+    setActiveAccount(Object.keys(aeSdk._accounts?.current || {})[0] as any);
     scanningForAccounts.value = false;
   }
 
   function onAccount() {
     return {
-      address: () => String(accounts.activeAccount).toString(),
+      address: () => activeAccount.value,
       sign: async (raw: any, tx: any) => {
         console.info("onAccount.sign ::", {
           tx,
@@ -56,14 +58,20 @@ export function useAeppSdk() {
       compilerUrl: "https://compiler.aepps.com",
       onNetworkChange: (params) => {
         console.log("onNetworkChange", params);
-        if (accounts.activeAccount) {
+        if (activeAccount) {
           preloadContracts();
         }
       },
-      onAddressChange: accounts.setActiveAccount,
+      onAddressChange: (a) => {
+        console.info("========================");
+        console.info("onAddressChange ::", a);
+        console.info("========================");
+
+        // setActiveAccount
+      },
       onDisconnect: () => {
-        accounts.setActiveAccount(undefined);
-        accounts.setAccounts([]);
+        setActiveAccount(undefined);
+        setAccounts([]);
         contractsLoaded.value = false;
         contracts.value = {};
       },
@@ -80,7 +88,7 @@ export function useAeppSdk() {
   async function preloadContracts() {
     const sdk = await getSdk();
     console.info("========================");
-    console.info("preloadContracts aeSdk::", accounts.activeAccount);
+    console.info("preloadContracts aeSdk::", activeAccount);
     console.info("========================");
 
     loadingContracts.value = true;
@@ -127,10 +135,9 @@ export function useAeppSdk() {
     loadingContracts.value = false;
     contractsLoaded.value = true;
 
-    console.info('========================');
-    console.info('contracts ::', contracts);
-    console.info('========================');
-
+    console.info("========================");
+    console.info("contracts ::", contracts);
+    console.info("========================");
   }
 
   return {

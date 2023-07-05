@@ -3,11 +3,13 @@
         <v-col cols="12">
             <h2 class="py-2">Overview</h2>
             <v-alert type="warning">
-                <strong>Note :</strong> <br />
+                <strong>Note :</strong>
+                The current price feed are not accurate and are only for testing
+                purposes. you can also change it from settings.
+                <br />
                 1 AE = {{ priceFeed.prettify(2) }} AEUSD
             </v-alert>
         </v-col>
-
 
         <v-col cols="12" md="6">
             <v-card>

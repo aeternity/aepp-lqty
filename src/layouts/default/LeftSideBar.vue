@@ -8,11 +8,26 @@
                     </template>
                     <v-list-item-title> Dashboard </v-list-item-title>
                 </v-list-item>
-                <v-list-item :to="{ name: 'liquity' }">
+
+                <v-list-item :to="{ name: 'borrow' }">
                     <template v-slot:prepend>
-                        <v-icon>mdi-bank</v-icon>
+                        <v-icon>mdi-bank-transfer-in</v-icon>
                     </template>
-                    <v-list-item-title> Liquity </v-list-item-title>
+                    <v-list-item-title> Borrow </v-list-item-title>
+                </v-list-item>
+
+                <v-list-item :to="{ name: 'lend' }">
+                    <template v-slot:prepend>
+                        <v-icon>mdi-bank-transfer</v-icon>
+                    </template>
+                    <v-list-item-title> Lend </v-list-item-title>
+                </v-list-item>
+
+                <v-list-item :to="{ name: 'troves' }">
+                    <template v-slot:prepend>
+                        <v-icon>mdi-list-box</v-icon>
+                    </template>
+                    <v-list-item-title> Active Troves </v-list-item-title>
                 </v-list-item>
 
                 <v-list-item :to="{ name: 'oracles' }">
