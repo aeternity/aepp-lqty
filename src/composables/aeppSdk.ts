@@ -44,14 +44,14 @@ export function useAeppSdk() {
     aeSdk = new AeSdkAepp({
       name: "AELQTY",
       nodes: [
-        {
-          name: "ae_uat",
-          instance: new Node("https://mainnet.aeternity.io"),
-        },
         // {
         //   name: "ae_uat",
-        //   instance: new Node("https://testnet.aeternity.io"),
+        //   instance: new Node("https://mainnet.aeternity.io"),
         // },
+        {
+          name: "ae_uat",
+          instance: new Node("https://testnet.aeternity.io"),
+        },
       ],
       compilerUrl: "https://compiler.aepps.com",
       onNetworkChange: (params) => {

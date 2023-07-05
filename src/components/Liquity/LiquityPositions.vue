@@ -37,7 +37,7 @@ export default {
         StabilityPool,
     },
     setup() {
-        const activeTab = ref("stabilityPool");
+        const activeTab = ref("troveManager");
         return {
             activeTab,
         };

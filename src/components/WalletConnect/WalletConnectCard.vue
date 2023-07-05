@@ -1,5 +1,5 @@
  <template>
-    <v-card>
+    <v-card v-if="!walletInfo" class="mb-4">
         <div class="d-flex flex-no-wrap justify-space-between">
             <div>
                 <v-card-title class="text-h5">
@@ -29,11 +29,20 @@
 </template>
 
 <script lang="ts">
+import { storeToRefs } from "pinia";
 import WalletConnect from "./WalletConnect.vue";
+import { useWalletConnect } from "@/store/walletConnect";
 
 export default {
     components: {
         WalletConnect,
+    },
+    setup() {
+        const { walletInfo } = storeToRefs(useWalletConnect());
+
+        return {
+            walletInfo,
+        };
     },
 };
 </script>

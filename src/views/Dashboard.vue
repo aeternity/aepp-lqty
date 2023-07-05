@@ -1,8 +1,5 @@
 <template>
     <v-row>
-        <v-col v-if="!walletInfo" cols="12">
-            <WalletConnectCard />
-        </v-col>
         <v-col cols="12">
             <h2>Overview</h2>
         </v-col>
@@ -18,33 +15,29 @@
         <v-col cols="12">
             <h2>DeFi Assets</h2>
         </v-col>
-        <v-col cols="12" md="4">
-            <NetWorthCard />
+        <v-col v-for="(token, index) in ASSETS" :key="index" cols="12" md="4">
+            <TokenPositionCard :token="token" />
         </v-col>
     </v-row>
 </template>
 
 <script lang="ts">
-import WalletConnectCard from "@/components/WalletConnect/WalletConnectCard.vue";
-import NetWorthCard from "@/components/Cards/NetWorthCard.vue";
 import BorrowedTokensCard from "@/components/Cards/BorrowedTokensCard.vue";
+import NetWorthCard from "@/components/Cards/NetWorthCard.vue";
 import SuppliedTokensCard from "@/components/Cards/SuppliedTokensCard.vue";
-
-import { useWalletConnect } from "@/store/walletConnect";
-import { storeToRefs } from "pinia";
+import TokenPositionCard from "@/components/Cards/TokenPositionCard.vue";
+import { ASSETS } from "@/utils";
 
 export default {
     components: {
         NetWorthCard,
-        WalletConnectCard,
         BorrowedTokensCard,
         SuppliedTokensCard,
+        TokenPositionCard,
     },
     setup() {
-        const { walletInfo } = storeToRefs(useWalletConnect());
-
         return {
-            walletInfo,
+            ASSETS,
         };
     },
 };

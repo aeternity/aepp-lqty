@@ -21,6 +21,11 @@ const routes = [
         name: 'oracles',
         component: () => import(/* webpackChunkName: "oracles" */ '@/views/Oracles.vue'),
       },
+      {
+        path: '/settings',
+        name: 'settings',
+        component: () => import(/* webpackChunkName: "settings" */ '@/views/Settings.vue'),
+      },
     ],
   },
 ]

@@ -1,42 +1,29 @@
 <template>
     <div>
-        <v-btn @click="checkOracle()"> Check Oracle </v-btn>
+        <v-btn @click="loadOraclesQueries()"> Check Oracle v2 </v-btn>
+
+        <pre>
+            {{ oracles }}
+        </pre>
     </div>
 </template>
 
 <script lang="ts">
 import { useAeppSdk } from "@/composables";
-import { storeToRefs } from 'pinia';
-import { useAccounts } from '@/store/accounts';
+import { useAccounts } from "@/store/accounts";
+import { useOracles } from "@/store/oracles";
+import { storeToRefs } from "pinia";
 
 export default {
     setup() {
         const { getSdk } = useAeppSdk();
         const { activeAccount } = storeToRefs(useAccounts());
-
-        async function checkOracle() {
-            const ORACLE_ID =
-                "ok_2NRBaMsgSDjZRFw4dU82KCqLa5W7aQdbJAzaFprTpjEGLAzroV";
-            const sdk = await getSdk();
-            const oracle = await sdk.getOracleObject(ORACLE_ID, {
-              onAccount: activeAccount.value,
-            });
-
-            console.info("respondToQuery ::", oracle.respondToQuery({
-              onAccount: activeAccount.value,
-            }));
-            const query = await oracle.postQuery("eur", {
-                queryFee: oracle.queryFee,
-            });
-
-            console.info("========================");
-            console.info("query ::", query);
-            console.info("query ::", oracle.respondToQuery());
-            console.info("========================");
-        }
+        const { oracles } = storeToRefs(useOracles());
+        const { loadOraclesQueries } = useOracles();
 
         return {
-            checkOracle,
+            oracles,
+            loadOraclesQueries,
         };
     },
 };

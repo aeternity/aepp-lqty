@@ -21,21 +21,18 @@
                         :text="error"
                     ></v-alert>
                     <v-form>
-                        <v-text-field
-                            outline
-                            label="Collateral"
-                            type="number"
+                        <AmountInput
                             v-model="collateral"
+                            label="Collateral"
                             suffix="AE"
-                        ></v-text-field>
-                        <v-text-field
-                            label="Borrow Amount"
-                            type="number"
+                        />
+
+                        <AmountInput
                             v-model="borrow"
-                            inn
+                            label="Borrow Amount"
                             :suffix="AEUSD_TOKEN.symbol"
-                        >
-                        </v-text-field>
+                        />
+
 
                         <div class="py-4">
                             <div class="py-2">
@@ -138,11 +135,13 @@ import { usePriceFeed } from "@/composables/priceFeed";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
 import { AEUSD_TOKEN } from "@/utils";
+import AmountInput from "@/components/Forms/AmountInput.vue";
 
 export default {
     components: {
         CollateralRatio,
         HelpTooltip,
+        AmountInput,
     },
     setup() {
         const accounts = useAccounts();
@@ -167,15 +166,9 @@ export default {
         const borrowingFee = ref<Decimal>(Decimal.ZERO);
         const maxBorrowAmount = ref<Decimal>(Decimal.ZERO);
 
-        const collateral = ref(0);
-        const collateralAmount = computed<Decimal>(() =>
-            Decimal.from(collateral.value ?? 0)
-        );
+        const collateral = ref<Decimal>(Decimal.ZERO);
 
-        const borrow = ref(0);
-        const borrowAmount = computed<Decimal>(() =>
-            Decimal.from(borrow.value ?? 0)
-        );
+        const borrow = ref<Decimal>(Decimal.ZERO);
 
         const totalDebt = ref();
         const totalDebtAmount = computed<Decimal>(() =>
@@ -183,11 +176,11 @@ export default {
         );
 
         const trove = computed<Trove>(
-            () => new Trove(collateralAmount.value, totalDebtAmount.value)
+            () => new Trove(collateral.value, totalDebtAmount.value)
         );
 
         const collateralRatio = computed(() =>
-            !collateralAmount.value.isZero && !borrowAmount.value.isZero
+            !collateral.value.isZero && !borrow.value.isZero
                 ? trove.value.collateralRatio(priceFeed.value.toString())
                 : Decimal.ZERO
         );
@@ -202,26 +195,28 @@ export default {
 
         const canOpenTrove = computed(
             (): boolean =>
-                minNetDebt.value.lt(borrowAmount.value) &&
+                minNetDebt.value.lt(borrow.value) &&
                 !collateralRatio.value.lte(1.1)
         );
 
-        watch(borrowAmount, async (borrowAmountValue) => {
-            loadingBorrowingFee.value = true;
+        watch(
+            borrow,
+            async (borrowValue) => {
+                loadingBorrowingFee.value = true;
 
-            borrowingFee.value = await getBorrowingFee(borrowAmountValue);
+                borrowingFee.value = await getBorrowingFee(borrowValue);
 
-            totalDebt.value = (await getCompositeDebt(borrowingFee.value))
-                .add(borrowAmountValue)
-                .toString();
+                totalDebt.value = (await getCompositeDebt(borrowingFee.value))
+                    .add(borrowValue)
+                    .toString();
 
-            loadingBorrowingFee.value = false;
-        }, {  });
+                loadingBorrowingFee.value = false;
+            },
+            {}
+        );
 
         watch(collateral, async () => {
-            maxBorrowAmount.value = await getCompositeDebt(
-                collateralAmount.value
-            );
+            maxBorrowAmount.value = await getCompositeDebt(collateral.value);
         });
 
         function onOpenTroveDialogPress() {
@@ -234,11 +229,11 @@ export default {
                 const tx =
                     await contracts.BorrowerOperations.methods.open_trove(
                         maxFeePercentage.value.bigNumber, // maxFeePercentage.value,
-                        borrowAmount.value.bigNumber, //borrowAmount.value,
+                        borrow.value.bigNumber, //borrow.value,
                         accounts.activeAccount,
                         accounts.activeAccount,
                         {
-                            amount: collateralAmount.value.bigNumber,
+                            amount: collateral.value.bigNumber,
                             onAccount: onAccount(),
                             waitMined: false,
                         }
@@ -278,7 +273,7 @@ export default {
             totalDebtAmount,
             borrowingFee,
             priceFeed,
-            borrowAmount,
+            borrow,
 
             collateral,
             borrow,
