@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer color="surface">
+    <v-navigation-drawer color="surface" :model-value="leftSideBar">
         <div style="height: 80%">
             <v-list class="flex-1">
                 <v-list-item :to="{ name: 'dashboard' }" exact>
@@ -55,12 +55,13 @@ import { storeToRefs } from "pinia";
 
 export default {
     setup() {
-        const { darkMode } = storeToRefs(useAppStore());
+        const { darkMode, leftSideBar } = storeToRefs(useAppStore());
         const { toggleDarkMode } = useAppStore();
 
         return {
             darkMode,
             toggleDarkMode,
+            leftSideBar,
         };
     },
 };

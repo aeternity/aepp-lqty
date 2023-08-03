@@ -1,18 +1,22 @@
 <template>
     <div v-if="activeAccount" class="d-flex align-center px-4">
-        <v-chip v-if="walletInfo" class="mr-4">
+        <v-chip v-if="walletInfo" class="mr-4 d-none d-md-flex">
             <v-icon color="blue" class="mr-2" size="14">mdi-wallet</v-icon>
             {{ walletInfo?.name }}
         </v-chip>
         <v-chip v-if="activeNetwork" class="mr-4">
             <v-icon color="green" class="mr-2" size="14">mdi-circle</v-icon>
-            {{ activeNetwork.name }}
+            <span class="d-none d-md-block">{{ activeNetwork.name }}</span>
         </v-chip>
         <v-menu>
             <template v-slot:activator="{ props }">
                 <v-chip v-bind="props">
                     <v-avatar start loading>
-                        <v-progress-circular v-if="scanningForAccounts" indeterminate color="primary"/>
+                        <v-progress-circular
+                            v-if="scanningForAccounts"
+                            indeterminate
+                            color="primary"
+                        />
                         <v-img
                             v-else
                             :src="`https://avatars.z52da5wt.xyz/${activeAccount}`"
@@ -50,10 +54,6 @@
             </v-list>
         </v-menu>
 
-        <div class="pl-4">
-            {{ !balance?.isZero ? balance.prettify(2) : 0 }} AE
-        </div>
-
         <v-dialog v-model="accountDetailDialog" max-width="600px">
             <v-card>
                 <v-card-title>
@@ -79,7 +79,6 @@
 
 <script lang="ts">
 import { useAccounts } from "@/store/accounts";
-import { useBalances } from "@/store/balances";
 import { useNetworks } from "@/store/networks";
 import { useWalletConnect } from "@/store/walletConnect";
 import { formatAddress } from "@/utils";
@@ -93,8 +92,6 @@ export default {
         const { setActiveAccount } = useAccounts();
         const { activeAccount, accounts } = storeToRefs(useAccounts());
 
-        const { balance } = storeToRefs(useBalances());
-
         const { walletInfo, scanningForAccounts } = storeToRefs(
             useWalletConnect()
         );
@@ -105,7 +102,6 @@ export default {
         return {
             scanningForAccounts,
 
-            balance,
             activeAccount,
             accounts,
             setActiveAccount,

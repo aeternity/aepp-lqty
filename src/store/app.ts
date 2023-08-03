@@ -6,6 +6,7 @@ export const useAppStore = defineStore(
   "app",
   () => {
     const darkMode = ref(true);
+    const leftSideBar = ref(false);
 
     function toggleDarkMode() {
       darkMode.value = !darkMode.value;
@@ -13,6 +14,7 @@ export const useAppStore = defineStore(
 
     return {
       darkMode,
+      leftSideBar,
       toggleDarkMode,
     };
   },
