@@ -17,25 +17,20 @@
 </template>
 
 <script lang="ts">
-import { useBalances } from "@/store/balances";
-import { storeToRefs } from "pinia";
 import { useTroveManager } from "@/composables/troveManager";
+import { AEUSD_TOKEN } from "@/utils";
 import { Decimal } from "@liquity/lib-base";
 import { computed } from "vue";
-import { AEUSD_TOKEN } from "@/utils";
 
 export default {
     setup() {
         const { activeTrove } = useTroveManager();
-
-        const { balance } = storeToRefs(useBalances());
 
         const totalBorrowed = computed<Decimal>(() => {
             return Decimal.fromBigNumberString(activeTrove.value?.debt || 0);
         });
 
         return {
-            balance,
             totalBorrowed,
             AEUSD_TOKEN,
         };

@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import AccountOverview from "@/components/AccountOverview.vue";
+import AccountOverview from "@/components/Account/AccountOverview.vue";
 import LiquityPositions from "@/components/Liquity/LiquityPositions.vue";
 
 import { useAeppSdk } from "@/composables";

@@ -30,13 +30,6 @@
                     <v-list-item-title> Active Troves </v-list-item-title>
                 </v-list-item>
 
-                <v-list-item :to="{ name: 'oracles' }">
-                    <template v-slot:prepend>
-                        <v-icon>mdi-lan</v-icon>
-                    </template>
-                    <v-list-item-title> Oracles </v-list-item-title>
-                </v-list-item>
-
                 <v-list-item :to="{ name: 'settings' }">
                     <template v-slot:prepend>
                         <v-icon>mdi-cog</v-icon>

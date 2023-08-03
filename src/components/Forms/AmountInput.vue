@@ -5,6 +5,7 @@
         @input="onValueChange"
         @focus="isFocused = true"
         @blur="isFocused = false"
+        focused
         outline
     ></v-text-field>
 </template>

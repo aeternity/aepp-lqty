@@ -1,7 +1,7 @@
 <template>
     <v-row>
         <v-col cols="12">
-            <h2 class="py-2">Overview</h2>
+            <h2 class="py-2">Account Overview</h2>
             <v-alert type="warning">
                 <strong>Note :</strong>
                 The current price feed are not accurate and are only for testing
@@ -11,36 +11,34 @@
             </v-alert>
         </v-col>
 
-        <v-col cols="12" md="6">
-            <v-card>
-                <v-card-title> 0.50% </v-card-title>
-                <v-card-text> Borrow Fee </v-card-text>
-            </v-card>
+        <v-col cols="12" md="4">
+            <AccountTotalBalanceCard />
         </v-col>
 
-        <v-col md="6">
-            <v-card>
-                <v-card-title> TODO </v-card-title>
-                <v-card-text> D / C (%) </v-card-text>
-            </v-card>
+        <v-col cols="12" md="4">
+            <AccountTotalBorrowedTokensCard />
         </v-col>
 
-        <v-col md="6">
-            <v-card>
-                <v-card-title> TODO </v-card-title>
-                <v-card-text> Liquidation (AE) </v-card-text>
-            </v-card>
+        <v-col cols="12" md="4">
+            <AccountTotalSuppliedTokensCard />
         </v-col>
     </v-row>
 </template>
 
 <script lang="ts">
+import { usePriceFeed } from "@/composables/priceFeed";
 import { useStableToken } from "@/composables/stableToken";
 import { AEUSD_TOKEN } from "@/utils";
-import { usePriceFeed } from "@/composables/priceFeed";
-// import TransferStableToken from "./Exchange/TransferStableToken.vue";
+import AccountTotalBalanceCard from "./Cards/AccountTotalBalanceCard.vue";
+import AccountTotalBorrowedTokensCard from "./Cards/AccountTotalBorrowedTokensCard.vue";
+import AccountTotalSuppliedTokensCard from "./Cards/AccountTotalSuppliedTokensCard.vue";
 
 export default {
+    components: {
+        AccountTotalBalanceCard,
+        AccountTotalBorrowedTokensCard,
+        AccountTotalSuppliedTokensCard,
+    },
     setup() {
         const { activeAccountStableTokenBalance } = useStableToken();
         const { priceFeed } = usePriceFeed();
