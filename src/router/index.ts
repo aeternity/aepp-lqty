@@ -21,10 +21,10 @@ const routes = [
       },
 
       {
-        path: "/lend",
-        name: "lend",
+        path: "/invest",
+        name: "invest",
         component: () =>
-          import(/* webpackChunkName: "lend" */ "@/views/Lend.vue"),
+          import(/* webpackChunkName: "stake" */ "@/views/Invest.vue"),
       },
 
       {

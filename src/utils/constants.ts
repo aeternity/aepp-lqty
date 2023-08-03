@@ -39,22 +39,22 @@ export const NETWORKS = {
 
 export const ASSETS = [
   AEUSD_TOKEN,
-  {
-    name: "AEEUR",
-    symbol: "AEEUR",
-    decimals: 17,
-    contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6B", // TODO: fake address
-  },
-  {
-    name: "AEBITCOIN",
-    symbol: "AEBITCOIN",
-    decimals: 17,
-    contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6D", // TODO: fake address
-  },
-  {
-    name: "AEDASH",
-    symbol: "AEDASH",
-    decimals: 17,
-    contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6C", // TODO: fake address
-  },
+  // {
+  //   name: "AEEUR",
+  //   symbol: "AEEUR",
+  //   decimals: 17,
+  //   contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6B", // TODO: fake address
+  // },
+  // {
+  //   name: "AEBITCOIN",
+  //   symbol: "AEBITCOIN",
+  //   decimals: 17,
+  //   contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6D", // TODO: fake address
+  // },
+  // {
+  //   name: "AEDASH",
+  //   symbol: "AEDASH",
+  //   decimals: 17,
+  //   contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6C", // TODO: fake address
+  // },
 ];

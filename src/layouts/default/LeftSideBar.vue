@@ -16,11 +16,11 @@
                     <v-list-item-title> Borrow </v-list-item-title>
                 </v-list-item>
 
-                <v-list-item :to="{ name: 'lend' }">
+                <v-list-item :to="{ name: 'invest' }">
                     <template v-slot:prepend>
                         <v-icon>mdi-bank-transfer</v-icon>
                     </template>
-                    <v-list-item-title> Lend </v-list-item-title>
+                    <v-list-item-title> Stake </v-list-item-title>
                 </v-list-item>
 
                 <v-list-item :to="{ name: 'troves' }">
