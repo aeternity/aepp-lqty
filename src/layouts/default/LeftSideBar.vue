@@ -23,6 +23,13 @@
                     <v-list-item-title> Stake </v-list-item-title>
                 </v-list-item>
 
+                <v-list-item :to="{ name: 'stability-pool' }">
+                    <template v-slot:prepend>
+                        <v-icon>mdi-bank-transfer</v-icon>
+                    </template>
+                    <v-list-item-title> Stability Pool </v-list-item-title>
+                </v-list-item>
+
                 <v-list-item :to="{ name: 'markets' }">
                     <template v-slot:prepend>
                         <v-icon>mdi-bank-transfer</v-icon>

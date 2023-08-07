@@ -26,6 +26,12 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "stake" */ "@/views/Invest.vue"),
       },
+      {
+        path: "/stability-pool",
+        name: "stability-pool",
+        component: () =>
+          import(/* webpackChunkName: "stability-pool" */ "@/views/StabilityPool.vue"),
+      },
 
       {
         path: "/troves",
