@@ -48,11 +48,19 @@ export function useTroveManager() {
   }
 
   async function loadActiveTrove() {
-    const { decodedResult } = await contracts.TroveManager.methods.troves(
-      accounts.activeAccount
-    );
+    try {
+      const { decodedResult } = await contracts.TroveManager.methods.troves(
+        accounts.activeAccount
+      );
 
-    activeTrove.value = decodedResult;
+      activeTrove.value = decodedResult;
+    } catch (error: any) {
+      if (error.message.includes('tx_nonce_too_high_for_account')) {
+        setTimeout(() => {
+          loadActiveTrove();
+        }, 1000)
+      }
+    }
   }
 
   return {
