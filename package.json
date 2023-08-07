@@ -14,6 +14,7 @@
     "@liquity/lib-base": "^3.0.0",
     "@mdi/font": "7.2.96",
     "aeternity-fungible-token": "^2.0.0",
+    "camelcase-keys-deep": "^0.1.0",
     "core-js": "^3.29.0",
     "lodash-es": "^4.17.21",
     "lqty-contracts": "https://github.com/aeternity/lqty-contracts",

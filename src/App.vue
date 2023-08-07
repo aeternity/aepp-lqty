@@ -17,11 +17,12 @@ import { storeToRefs } from "pinia";
 import { onMounted, ref, watch } from "vue";
 import { useTroveManager } from "./composables/troveManager";
 import { useAccounts } from "./store/accounts";
+import { useCurrencies } from "./store/currencies";
 
 const { initSdk, preloadContracts } = useAeppSdk();
 const { loadActiveTrove } = useTroveManager();
 const { activeAccount } = storeToRefs(useAccounts());
-
+const { loadAeternityData, loadCurrencyRates } = useCurrencies();
 const loadingApp = ref(true);
 
 watch(
@@ -33,7 +34,11 @@ watch(
 );
 
 onMounted(async () => {
-    await initSdk();
+    await Promise.all([
+        loadAeternityData(),
+        loadCurrencyRates(),
+        initSdk(),
+    ]);
     await preloadContracts();
     await loadActiveTrove();
     // if there's a connected wallet, retrieve open troves

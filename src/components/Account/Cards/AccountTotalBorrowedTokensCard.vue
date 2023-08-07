@@ -2,9 +2,11 @@
     <v-card>
         <div class="d-flex flex-no-wrap justify-space-between align-center">
             <div>
-                <v-card-title class="text-h5">
-                    {{ totalBorrowed.prettify(2) }} {{ AEUSD_TOKEN.symbol }}
-                </v-card-title>
+                <AmountFormatter
+                  class="pa-4"
+                  :amount="totalBorrowed"
+                  :token="AEUSD_TOKEN"
+                />
 
                 <v-card-text> Borrowed </v-card-text>
             </div>
@@ -21,8 +23,10 @@ import { useTroveManager } from "@/composables/troveManager";
 import { AEUSD_TOKEN } from "@/utils";
 import { Decimal } from "@liquity/lib-base";
 import { computed } from "vue";
+import AmountFormatter from '@/components/Common/AmountFormatter.vue';
 
 export default {
+    components: { AmountFormatter },
     setup() {
         const { activeTrove } = useTroveManager();
 

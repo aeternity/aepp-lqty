@@ -35,7 +35,7 @@
                                 <template v-slot:prepend>
                                     <v-avatar start size="24">
                                         <v-img
-                                            :src="`https://avatars.z52da5wt.xyz/${item.value.contractAddress}`"
+                                            :src="`https://avatars.z52da5wt.xyz/${item.value.contractId}`"
                                         />
                                     </v-avatar>
                                 </template>

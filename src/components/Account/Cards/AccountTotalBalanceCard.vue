@@ -2,10 +2,7 @@
     <v-card>
         <div class="d-flex flex-no-wrap justify-space-between align-center">
             <div>
-                <v-card-title class="text-h5">
-                    {{ balance.prettify(2) }} AE
-                </v-card-title>
-
+                <AmountFormatter class="pa-4" :amount="balance" />
                 <v-card-text> Net Worth </v-card-text>
             </div>
 
@@ -17,10 +14,12 @@
 </template>
 
 <script lang="ts">
+import AmountFormatter from "@/components/Common/AmountFormatter.vue";
 import { useBalances } from "@/store/balances";
 import { storeToRefs } from "pinia";
 
 export default {
+    components: { AmountFormatter },
     setup() {
         const { balance } = storeToRefs(useBalances());
 

@@ -6,7 +6,7 @@
                     <div class="d-flex align-center">
                         <v-avatar start>
                             <v-img
-                                :src="`https://avatars.z52da5wt.xyz/${AEUSD_TOKEN.contractAddress}`"
+                                :src="`https://avatars.z52da5wt.xyz/${AEUSD_TOKEN.contractId}`"
                                 class="token-icon"
                             />
                         </v-avatar>

@@ -4,7 +4,7 @@
             <div class="d-flex align-center">
                 <v-avatar start>
                     <v-img
-                        :src="`https://avatars.z52da5wt.xyz/${token.contractAddress}`"
+                        :src="`https://avatars.z52da5wt.xyz/${token.contractId}`"
                         class="token-icon"
                     />
                 </v-avatar>

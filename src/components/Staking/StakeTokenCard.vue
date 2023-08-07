@@ -5,7 +5,7 @@
                 <v-col cols="6" md="3" class="d-flex align-center">
                     <v-avatar start size="24">
                         <v-img
-                            :src="`https://avatars.z52da5wt.xyz/${token.contractAddress}`"
+                            :src="`https://avatars.z52da5wt.xyz/${token.contractId}`"
                         />
                     </v-avatar>
                     <div class="text-h6 pl-2">

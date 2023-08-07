@@ -2,9 +2,7 @@
     <v-card>
         <div class="d-flex flex-no-wrap justify-space-between align-center">
             <div>
-                <v-card-title class="text-h5">
-                    {{ totalSupplied.prettify(2) }} AE
-                </v-card-title>
+                <AmountFormatter class="pa-4" :amount="totalSupplied" />
 
                 <v-card-text> Supplied </v-card-text>
             </div>
@@ -22,8 +20,10 @@ import { storeToRefs } from "pinia";
 import { useTroveManager } from "@/composables/troveManager";
 import { Decimal } from "@liquity/lib-base";
 import { computed } from "vue";
+import AmountFormatter from "@/components/Common/AmountFormatter.vue";
 
 export default {
+    components: { AmountFormatter },
     setup() {
         const { activeTrove } = useTroveManager();
 
