@@ -13,15 +13,31 @@
 
 <script lang="ts" setup>
 import { useAeppSdk } from "@/composables";
-import { onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { onMounted, ref, watch } from "vue";
+import { useTroveManager } from "./composables/troveManager";
+import { useAccounts } from "./store/accounts";
 
 const { initSdk, preloadContracts } = useAeppSdk();
+const { loadActiveTrove } = useTroveManager();
+const { activeAccount } = storeToRefs(useAccounts());
 
 const loadingApp = ref(true);
+
+watch(
+    () => activeAccount,
+    async () => {
+        if (!activeAccount.value) return;
+        await loadActiveTrove();
+    },
+    { immediate: true }
+);
 
 onMounted(async () => {
     await initSdk();
     await preloadContracts();
+    await loadActiveTrove();
+    // if there's a connected wallet, retrieve open troves
     loadingApp.value = false;
 });
 </script>

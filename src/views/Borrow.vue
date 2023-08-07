@@ -10,12 +10,8 @@
 </template>
 
 <script lang="ts">
-import TroveManager from "@/components/TroveManager/TroveManager.vue";
-import { useTroveManager } from "@/composables/troveManager";
-import { storeToRefs } from "pinia";
-import { useAccounts } from "@/store/accounts";
-import { watch } from "vue";
 import AccountOverview from "@/components/Account/AccountOverview.vue";
+import TroveManager from "@/components/TroveManager/TroveManager.vue";
 
 export default {
     components: {
@@ -23,24 +19,7 @@ export default {
         AccountOverview,
     },
     setup() {
-        const { loadActiveTrove, activeTrove } = useTroveManager();
-        const { activeAccount } = storeToRefs(useAccounts());
 
-        watch(
-            () => activeAccount,
-            async () => {
-                console.info("========================");
-                console.info("activeAccount ::", activeAccount);
-                console.info("========================");
-
-                await loadActiveTrove();
-            },
-            { immediate: true }
-        );
-        return {
-            activeTrove,
-            activeAccount,
-        };
     },
 };
 </script>
