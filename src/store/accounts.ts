@@ -11,17 +11,10 @@ export const useAccounts = defineStore(
     const activeAccount = ref<Encoded.AccountAddress>();
 
     function setActiveAccount(account?: Encoded.AccountAddress) {
-      console.info("========================");
-      console.info("setActiveAccount ::", account);
-      console.info("========================");
       activeAccount.value = account;
     }
 
     function setAccounts(_accounts: Encoded.AccountAddress[]) {
-      console.info("========================");
-      console.info("setAccounts ::", _accounts);
-      console.info("========================");
-
       accounts.value = _accounts;
     }
 

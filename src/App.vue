@@ -29,8 +29,7 @@ watch(
     async () => {
         if (!activeAccount.value) return;
         await loadActiveTrove();
-    },
-    { immediate: true }
+    }
 );
 
 onMounted(async () => {

@@ -61,9 +61,6 @@ export const useWalletConnect = defineStore(
 
     async function connectWallet() {
       const wallet = await scanForWallets();
-      console.info("========================");
-      console.info("wallet ::", wallet);
-      console.info("========================");
 
       if (!wallet) {
         return;
@@ -84,10 +81,6 @@ export const useWalletConnect = defineStore(
     }
 
     async function disconnectWallet() {
-      console.info("========================");
-      console.info("disconnectWallet ::");
-      console.info("========================");
-
       const aeSdk = await getSdk();
       setActiveAccount(undefined);
       setAccounts([]);
@@ -114,14 +107,10 @@ export const useWalletConnect = defineStore(
 
         const handleWallets = async ({
           newWallet,
-          wallets,
         }: {
           newWallet?: Wallet | undefined;
           wallets: any;
         }) => {
-          console.info("========================");
-          console.info("newWallet ::", { newWallet, wallets });
-          console.info("========================");
           clearTimeout($walletConnectTimeout);
           stopScan();
           resolve(newWallet);

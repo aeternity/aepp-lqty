@@ -23,6 +23,13 @@
                     <v-list-item-title> Stake </v-list-item-title>
                 </v-list-item>
 
+                <v-list-item :to="{ name: 'markets' }">
+                    <template v-slot:prepend>
+                        <v-icon>mdi-bank-transfer</v-icon>
+                    </template>
+                    <v-list-item-title> Markets </v-list-item-title>
+                </v-list-item>
+
                 <v-list-item :to="{ name: 'troves' }">
                     <template v-slot:prepend>
                         <v-icon>mdi-list-box</v-icon>

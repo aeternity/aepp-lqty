@@ -36,16 +36,22 @@ const routes = [
           ),
       },
       {
-        path: "/oracles",
-        name: "oracles",
+        path: "/markets",
+        name: "markets",
         component: () =>
-          import(/* webpackChunkName: "oracles" */ "@/views/Oracles.vue"),
+          import(/* webpackChunkName: "markets" */ "@/views/Markets.vue"),
       },
       {
         path: "/settings",
         name: "settings",
         component: () =>
           import(/* webpackChunkName: "settings" */ "@/views/Settings.vue"),
+      },
+      {
+        path: "/test",
+        name: "test",
+        component: () =>
+          import(/* webpackChunkName: "test" */ "@/views/Test.vue"),
       },
     ],
   },
