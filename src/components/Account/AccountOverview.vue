@@ -28,7 +28,8 @@
 <script lang="ts">
 import { usePriceFeed } from "@/composables/priceFeed";
 import { useStableToken } from "@/composables/stableToken";
-import { AEUSD_TOKEN } from "@/utils";
+import { useTokens } from "@/store/tokens";
+import { storeToRefs } from "pinia";
 import AccountTotalBalanceCard from "./Cards/AccountTotalBalanceCard.vue";
 import AccountTotalBorrowedTokensCard from "./Cards/AccountTotalBorrowedTokensCard.vue";
 import AccountTotalSuppliedTokensCard from "./Cards/AccountTotalSuppliedTokensCard.vue";
@@ -42,6 +43,7 @@ export default {
     setup() {
         const { activeAccountStableTokenBalance } = useStableToken();
         const { priceFeed } = usePriceFeed();
+        const { AEUSD_TOKEN } = storeToRefs(useTokens());
 
         return {
             activeAccountStableTokenBalance,

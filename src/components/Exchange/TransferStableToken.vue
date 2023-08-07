@@ -40,11 +40,14 @@ import { ref } from "vue";
 
 import { useAeppSdk } from "@/composables";
 import { useStableToken } from "@/composables/stableToken";
+import { useTokens } from "@/store/tokens";
 import { Decimal } from "@liquity/lib-base";
-import { AEUSD_TOKEN } from "@/utils";
+import { storeToRefs } from "pinia";
 
 export default {
     setup() {
+      const { AEUSD_TOKEN } = storeToRefs(useTokens());
+
         const { onAccount, contracts } = useAeppSdk();
         const { loadAccountStableTokenBalance } = useStableToken();
         const dialogOpen = ref(false);

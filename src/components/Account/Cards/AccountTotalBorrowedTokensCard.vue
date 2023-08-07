@@ -3,9 +3,9 @@
         <div class="d-flex flex-no-wrap justify-space-between align-center">
             <div>
                 <AmountFormatter
-                  class="pa-4"
-                  :amount="totalBorrowed"
-                  :token="AEUSD_TOKEN"
+                    class="pa-4"
+                    :amount="totalBorrowed"
+                    :token="AEUSD_TOKEN"
                 />
 
                 <v-card-text> Borrowed </v-card-text>
@@ -20,15 +20,17 @@
 
 <script lang="ts">
 import { useTroveManager } from "@/composables/troveManager";
-import { AEUSD_TOKEN } from "@/utils";
 import { Decimal } from "@liquity/lib-base";
 import { computed } from "vue";
-import AmountFormatter from '@/components/Common/AmountFormatter.vue';
+import AmountFormatter from "@/components/Common/AmountFormatter.vue";
+import { storeToRefs } from "pinia";
+import { useTokens } from "@/store/tokens";
 
 export default {
     components: { AmountFormatter },
     setup() {
         const { activeTrove } = useTroveManager();
+        const { AEUSD_TOKEN } = storeToRefs(useTokens());
 
         const totalBorrowed = computed<Decimal>(() => {
             return Decimal.fromBigNumberString(activeTrove.value?.debt || 0);

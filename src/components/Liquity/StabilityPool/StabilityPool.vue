@@ -37,7 +37,12 @@
                     <v-btn variant="outlined" color="primary" block>
                         Claim LQTY and AE
                     </v-btn>
-                    <v-btn variant="outlined" color="primary" class="mt-4" block>
+                    <v-btn
+                        variant="outlined"
+                        color="primary"
+                        class="mt-4"
+                        block
+                    >
                         Claim LQTY and move ETH to Trove
                     </v-btn>
                 </v-card-text>
@@ -53,13 +58,16 @@
 </template>
 
 <script lang="ts">
+import { useTokens } from "@/store/tokens";
 import { Decimal } from "@liquity/lib-base";
-import { AEUSD_TOKEN } from "@/utils";
+import { storeToRefs } from "pinia";
 
 export default {
     name: "StabilityPool",
     components: {},
     setup() {
+        const { AEUSD_TOKEN } = storeToRefs(useTokens());
+
         return {
             Decimal,
             AEUSD_TOKEN,

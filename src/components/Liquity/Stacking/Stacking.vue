@@ -53,13 +53,17 @@
 </template>
 
 <script lang="ts">
+import { useTokens } from '@/store/tokens';
 import { Decimal } from "@liquity/lib-base";
-import { AEUSD_TOKEN } from "@/utils";
+import { storeToRefs } from 'pinia';
 
 export default {
     name: "StabilityPool",
     components: {},
     setup() {
+      const { AEUSD_TOKEN } = storeToRefs(useTokens());
+
+
         return {
             Decimal,
             AEUSD_TOKEN,

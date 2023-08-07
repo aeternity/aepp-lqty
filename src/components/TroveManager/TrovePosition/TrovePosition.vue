@@ -4,10 +4,7 @@
             <v-card>
                 <v-card-text class="d-flex align-center">
                     <div class="d-flex align-center">
-                        <img
-                            src="@/assets/tokens/ae.svg"
-                            class="token-icon"
-                        />
+                        <img src="@/assets/tokens/ae.svg" class="token-icon" />
                         <div class="text-h6 pl-4">
                             {{
                                 Decimal.fromBigNumberString(
@@ -66,8 +63,9 @@
 
 <script lang="ts">
 import { useTroveManager } from "@/composables/troveManager";
-import { AEUSD_TOKEN } from "@/utils";
+import { useTokens } from "@/store/tokens";
 import { Decimal } from "@liquity/lib-base";
+import { storeToRefs } from "pinia";
 import BorrowStableCoin from "./BorrowStableCoin.vue";
 import CloseTrove from "./CloseTrove.vue";
 import CollateralSupply from "./CollateralSupply.vue";
@@ -83,6 +81,8 @@ export default {
         CloseTrove,
     },
     setup() {
+        const { AEUSD_TOKEN } = storeToRefs(useTokens());
+
         const { activeTrove } = useTroveManager();
         return {
             AEUSD_TOKEN,

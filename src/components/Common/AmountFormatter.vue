@@ -4,7 +4,7 @@
         {{ amount.prettify(2) }} {{ token.symbol }}
       </div>
       <div class="text-subtitle">
-        {{ getFormattedFiat(amount) }}
+        {{ getFormattedFiat(amount.mul(token.conversionRateToAE ?? 1)) }}
       </div>
     </div>
 </template>

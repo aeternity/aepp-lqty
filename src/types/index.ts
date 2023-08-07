@@ -28,6 +28,8 @@ export interface IToken {
   symbol: string;
   text?: string; // TODO determine if we can remove this
   value?: string; // TODO copy of the contractId, maybe we should remove it
+
+  conversionRateToAE?: number;
 }
 
 export type CurrencyCode = 'usd' | 'eur' | 'aud' | 'brl' | 'cad' | 'chf' | 'cny' | 'czk' | 'dkk' | 'gbp' | 'hkd' | 'huf' | 'idr' | 'ils' | 'inr' | 'jpy' | 'krw' | 'mxn' | 'myr' | 'nok' | 'nzd' | 'php' | 'pln' | 'rub' | 'sek' | 'sgd' | 'thb' | 'try' | 'zar' | 'xau';

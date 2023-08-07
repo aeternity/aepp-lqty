@@ -37,12 +37,15 @@ import { useAeppSdk } from "@/composables";
 import { useStableToken } from "@/composables/stableToken";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
-import { AEUSD_TOKEN } from '@/utils';
-import { Decimal } from '@liquity/lib-base';
+import { useTokens } from "@/store/tokens";
+import { Decimal } from "@liquity/lib-base";
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 export default {
     setup() {
+        const { AEUSD_TOKEN } = storeToRefs(useTokens());
+
         const dialogOpen = ref(false);
         const amount = ref(0);
         const error = ref("");

@@ -143,18 +143,19 @@
 </template>
 
 <script lang="ts">
-import { Decimal, Trove } from "@liquity/lib-base";
-import { computed, onMounted, ref, watch } from "vue";
 import HelpTooltip from "@/components/Common/HelpTooltip.vue";
 import CollateralRatio from "@/components/Liquity/Shared/CollateralRatio.vue";
+import { Decimal, Trove } from "@liquity/lib-base";
+import { computed, onMounted, ref, watch } from "vue";
 
+import AmountInput from "@/components/Forms/AmountInput.vue";
 import { useAeppSdk } from "@/composables";
 import { useBorrowerOperations } from "@/composables/borrowerOperations";
 import { usePriceFeed } from "@/composables/priceFeed";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
-import { AEUSD_TOKEN, ASSETS } from "@/utils";
-import AmountInput from "@/components/Forms/AmountInput.vue";
+import { useTokens } from "@/store/tokens";
+import { ASSETS } from "@/utils";
 import { storeToRefs } from "pinia";
 
 export default {
@@ -164,6 +165,8 @@ export default {
         AmountInput,
     },
     setup() {
+        const { AEUSD_TOKEN } = storeToRefs(useTokens());
+
         const { activeAccount } = storeToRefs(useAccounts());
         const accounts = useAccounts();
         const { contracts, onAccount } = useAeppSdk();
