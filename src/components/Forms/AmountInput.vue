@@ -6,7 +6,7 @@
         @focus="isFocused = true"
         @blur="isFocused = false"
         focused
-        outline
+        variant="outlined"
     ></v-text-field>
 </template>
 

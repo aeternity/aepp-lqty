@@ -60,7 +60,7 @@
                 </v-card>
             </v-col>
         </v-row>
-        <v-card v-if="dataReady">
+        <v-card v-if="dataReady && showProtocolStats">
             <v-card-title> Protocol </v-card-title>
             <v-divider />
             <v-card-text>
@@ -101,6 +101,12 @@ import HelpTooltip from "../Common/HelpTooltip.vue";
 
 export default {
     components: { HelpTooltip },
+    props: {
+      showProtocolStats: {
+        type: Boolean,
+        default: true,
+      },
+    },
     setup() {
         const { preloadInitialData } = useLiquityStore();
         const dataReady = ref(false);

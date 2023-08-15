@@ -70,11 +70,7 @@ export const useCurrencies = defineStore(
      *   eg.: "23 789,98 £", "$ 25.269,00"
      */
     function formatCurrency(value: Decimal): string {
-      return new Intl.NumberFormat(navigator.language, {
-        style: "currency",
-        currencyDisplay: "narrowSymbol",
-        currency: currentCurrencyCode.value,
-      }).format(value.shorten());
+      return `${currentCurrencyInfo.value.symbol} ${value.prettify(2)}`
     }
 
     /**
@@ -101,7 +97,7 @@ export const useCurrencies = defineStore(
      */
     function getFormattedAndRoundedFiat(value: Decimal): string {
       if (!currentCurrencyRate.value || value === Decimal.ZERO) {
-        return formatCurrency(0);
+        return formatCurrency(Decimal.ZERO);
       }
       const converted = getFiat(value);
       return converted < 0.01
