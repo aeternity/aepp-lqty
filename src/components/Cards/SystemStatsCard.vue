@@ -8,9 +8,16 @@
                 <v-card>
                     <v-card-title>
                         {{ total.collateral.shorten() }} AE
-                        <small>{{ totalValueLocked }}</small>
+                        <small>
+                            ({{ getFormattedFiat(total.collateral) }})</small
+                        >
                     </v-card-title>
-                    <v-card-text> Total Locked Value </v-card-text>
+                    <v-card-text>
+                        Total Locked Value
+                        <HelpTooltip
+                            text="The Total Value Locked (TVL) represents the cumulative value of AE locked within the system as collateral, denominated in both AE and USD."
+                        />
+                    </v-card-text>
                 </v-card>
             </v-col>
 
@@ -19,7 +26,12 @@
                     <v-card-title>
                         {{ total.debt.shorten() }}
                     </v-card-title>
-                    <v-card-text> AEUSD Supply </v-card-text>
+                    <v-card-text>
+                        AEUSD Supply
+                        <HelpTooltip
+                            text="The cumulative amount of AEUSD created through the Liquity Protocol."
+                        />
+                    </v-card-text>
                 </v-card>
             </v-col>
             <v-col cols="12" md="3" v-if="dataReady">
@@ -30,14 +42,19 @@
                             &nbsp;({{ lusdInStabilityPoolPct.toString(1) }})
                         </small>
                     </v-card-title>
-                    <v-card-text> AEUSD in Stability Pool </v-card-text>
+                    <v-card-text>
+                        AEUSD in Stability Pool
+                        <HelpTooltip
+                            text="The current amount of AEUSD held in the Stability Pool, both as a numerical value and a fraction relative to the total AEUSD supply."
+                        />
+                    </v-card-text>
                 </v-card>
             </v-col>
 
             <v-col cols="12" md="3" v-if="dataReady">
                 <v-card>
                     <v-card-title>
-                        {{ numberOfTrovesPretty }}
+                        {{ numberOfTroves.prettify(0) }}
                     </v-card-title>
                     <v-card-text> Total Open Troves </v-card-text>
                 </v-card>
@@ -75,12 +92,15 @@
 </template>
 
 <script lang="ts">
+import { useCurrencies } from "@/store/currencies";
 import { useLiquityStore } from "@/store/liquityStore";
-import { Decimal, Percent } from "@liquity/lib-base";
+import { Percent } from "@liquity/lib-base";
 import { storeToRefs } from "pinia";
 import { computed, onMounted, ref } from "vue";
+import HelpTooltip from "../Common/HelpTooltip.vue";
 
 export default {
+    components: { HelpTooltip },
     setup() {
         const { preloadInitialData } = useLiquityStore();
         const dataReady = ref(false);
@@ -93,6 +113,8 @@ export default {
             totalStakedLQTY,
             // kickbackRate, //
         } = storeToRefs(useLiquityStore());
+
+        const { getFormattedFiat } = useCurrencies();
 
         const lusdInStabilityPoolPct = computed(
             () =>
@@ -108,29 +130,6 @@ export default {
             () => new Percent(borrowingRate.value)
         );
 
-        const numberOfTrovesPretty = computed(() =>
-            Decimal.from(numberOfTroves.value).prettify(0)
-        );
-
-        const totalValueLocked = computed<string>(
-            () =>
-                `($${Decimal.from(
-                    total.value.collateral.mul(price.value)
-                ).shorten()})`
-        );
-
-        // const lusdInStabilityPoolPct =
-        //     total.value.debt.nonZero &&
-        //     new Percent(lusdInStabilityPool.value.div(total.value.debt));
-        // const totalCollateralRatioPct = new Percent(
-        //     total.value.collateralRatio(price.value)
-        // );
-        // const borrowingFeePct = new Percent(borrowingRate);
-        // const kickbackRatePct =
-        //     frontendTag === AddressZero
-        //         ? "100"
-        //         : kickbackRate?.mul(100).prettify();
-
         onMounted(async () => {
             await preloadInitialData();
             dataReady.value = true;
@@ -138,7 +137,6 @@ export default {
 
         return {
             dataReady,
-            totalValueLocked,
             borrowingFeePct,
             totalCollateralRatioPct,
             lusdInStabilityPoolPct,
@@ -146,7 +144,8 @@ export default {
             price,
             totalStakedLQTY,
             lusdInStabilityPool,
-            numberOfTrovesPretty,
+            numberOfTroves,
+            getFormattedFiat,
         };
     },
 };

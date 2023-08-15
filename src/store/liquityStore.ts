@@ -23,7 +23,7 @@ export const useLiquityStore = defineStore("liquityStore", () => {
   const ownFrontend = ref<FrontendStatus>();
 
   /** Number of Troves that are currently open. */
-  const numberOfTroves = ref<number>();
+  const numberOfTroves = ref<Decimal>(Decimal.ZERO);
 
   /** User's native currency balance (e.g. Ether). */
   const accountBalance = ref<Decimal>(Decimal.ZERO);
@@ -155,7 +155,7 @@ export const useLiquityStore = defineStore("liquityStore", () => {
       liquityHelpers.getTotalStakedLQTY(),
     ]);
 
-    numberOfTroves.value = _numberOfTroves;
+    numberOfTroves.value = Decimal.from(_numberOfTroves);
     price.value = _price;
     lusdInStabilityPool.value = _lusdInStabilityPool;
     total.value = _total;
