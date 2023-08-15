@@ -27,7 +27,7 @@
                 {{ modelValue.prettify(2) }}
             </div>
 
-            <v-btn variant="flat"> AE </v-btn>
+            <v-btn variant="flat"> {{ suffix }} </v-btn>
         </div>
         <div class="d-flex justify-space-between">
             <div>{{ getFormattedFiat(modelValue) }}</div>
@@ -71,6 +71,11 @@ export default {
             type: String,
             required: false,
         },
+        suffix: {
+            type: String,
+            required: false,
+            default: 'AE'
+        }
         // maxAmount
         // maxedOut
         // unit (AE, AEUSD)

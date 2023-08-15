@@ -47,6 +47,7 @@ export default {
         const loading = ref<boolean>(false);
         const error = ref<string | undefined>(undefined);
 
+        // TODO: show pool share
         async function onProvideAmountToSP() {
             error.value = undefined;
             loading.value = true;

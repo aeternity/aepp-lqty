@@ -93,7 +93,7 @@ export function useAeppSdk() {
 
     loadingContracts.value = true;
 
-    const contractsVersion = '1.0.0';
+    const contractsVersion = '1.0.1';
     const _contracts = [
       "ActivePool",
       "AEUSDToken",

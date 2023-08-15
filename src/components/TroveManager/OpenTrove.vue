@@ -16,10 +16,11 @@
                     Borrow cryptocurrencies and stable coins with 2 clicks.
                 </v-card-subtitle>
                 <v-card-text>
-                    <AmountInput
+                    <InputAmount
                         v-model="collateral"
                         label="Collateral"
                         suffix="AE"
+                        :max-amount="balance"
                     />
 
                     <v-select
@@ -42,10 +43,11 @@
                             </v-list-item>
                         </template>
                     </v-select>
-                    <AmountInput
+                    <InputAmount
                         v-model="borrow"
                         label="Amount"
                         :suffix="selectedBorrowAsset.symbol"
+                        :max-amount="maxBorrowAmount"
                     />
 
                     <v-alert type="warning">
@@ -148,7 +150,7 @@ import CollateralRatio from "@/components/Liquity/Shared/CollateralRatio.vue";
 import { Decimal, Trove } from "@liquity/lib-base";
 import { computed, onMounted, ref, watch } from "vue";
 
-import AmountInput from "@/components/Forms/AmountInput.vue";
+import InputAmount from "@/components/Forms/InputAmount.vue";
 import { useAeppSdk } from "@/composables";
 import { useBorrowerOperations } from "@/composables/borrowerOperations";
 import { usePriceFeed } from "@/composables/priceFeed";
@@ -157,18 +159,21 @@ import { useAccounts } from "@/store/accounts";
 import { useTokens } from "@/store/tokens";
 import { ASSETS } from "@/utils";
 import { storeToRefs } from "pinia";
+import { useBalances } from '@/store/balances';
 
 export default {
     components: {
         CollateralRatio,
         HelpTooltip,
-        AmountInput,
+        InputAmount,
     },
     setup() {
         const { AEUSD_TOKEN } = storeToRefs(useTokens());
 
         const { activeAccount } = storeToRefs(useAccounts());
         const accounts = useAccounts();
+        const { balance } = storeToRefs(useBalances());
+
         const { contracts, onAccount } = useAeppSdk();
         const {
             getCompositeDebt,
@@ -188,9 +193,15 @@ export default {
         const isOpenTroveDialogOpen = ref(false);
 
         const borrowingFee = ref<Decimal>(Decimal.ZERO);
-        const maxBorrowAmount = ref<Decimal>(Decimal.ZERO);
+        const compositeDebt = ref<Decimal>(Decimal.ZERO);
 
         const collateral = ref<Decimal>(Decimal.ZERO);
+
+        const maxBorrowAmount = computed<Decimal>(() => (
+            collateral.value
+                .mul(priceFeed.value)
+                .mul(Decimal.from(0.6))
+        ))
 
         const selectedBorrowAsset = ref(AEUSD_TOKEN);
         const borrow = ref<Decimal>(Decimal.ZERO);
@@ -242,7 +253,7 @@ export default {
         );
 
         watch(collateral, async () => {
-            maxBorrowAmount.value = await getCompositeDebt(collateral.value);
+            compositeDebt.value = await getCompositeDebt(collateral.value);
         });
 
         function onOpenTroveDialogPress() {
@@ -310,6 +321,7 @@ export default {
 
             error,
 
+            compositeDebt,
             maxBorrowAmount,
 
             isOpenTroveDialogOpen,
@@ -318,6 +330,8 @@ export default {
 
             onOpenTroveDialogPress,
             onOpenTrovePress,
+
+            balance,
         };
     },
 };

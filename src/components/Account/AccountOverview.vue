@@ -14,6 +14,13 @@
         <v-col cols="12" md="4">
             <AccountTotalBalanceCard />
         </v-col>
+        <v-col cols="12" md="3">
+          <v-card>
+            <v-card-text>
+              {{ activeAccountStableTokenBalance.prettify(2) }}
+            </v-card-text>
+          </v-card>
+        </v-col>
 
         <v-col cols="12" md="4">
             <AccountTotalBorrowedTokensCard />

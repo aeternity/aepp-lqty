@@ -1,0 +1,1 @@
+{"encodedAci":{"contract":{"functions":[{"arguments":[],"name":"owner","payable":false,"returns":"string","stateful":false}],"kind":"contract_main","name":"GasPool","payable":false,"type_defs":[]}},"externalEncodedAci":[],"interface":"main contract GasPool =\n  entrypoint owner : () => string\n"}
