@@ -115,14 +115,15 @@ export default {
 .input-container {
     border: 1px solid;
     border-color: rgb(var(--v-border-color));
-
+    position: relative;
 
 
     .input-label {
         position: absolute;
-        top: 14px;
+        top: -8px;
         padding-inline: 4px;
         background-color: rgb(var(--v-theme-surface));
+        color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
     }
 
     .input {
