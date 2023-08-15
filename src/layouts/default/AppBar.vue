@@ -13,8 +13,8 @@
 
         <v-spacer />
 
-        <WalletConnect />
         <HeaderCurrencySelector />
+        <WalletConnect />
         <HeaderAccountCard />
     </v-app-bar>
 </template>
