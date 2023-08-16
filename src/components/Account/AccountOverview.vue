@@ -15,11 +15,11 @@
             <AccountTotalBalanceCard />
         </v-col>
         <v-col cols="12" md="3">
-          <v-card>
-            <v-card-text>
-              {{ activeAccountStableTokenBalance.prettify(2) }}
-            </v-card-text>
-          </v-card>
+            <v-card>
+                <v-card-text>
+                    {{ activeAccountStableTokenBalance.prettify(2) }}
+                </v-card-text>
+            </v-card>
         </v-col>
 
         <v-col cols="12" md="4">
@@ -33,13 +33,13 @@
 </template>
 
 <script lang="ts">
-import { usePriceFeed } from "@/composables/priceFeed";
 import { useStableToken } from "@/composables/stableToken";
 import { useTokens } from "@/store/tokens";
 import { storeToRefs } from "pinia";
 import AccountTotalBalanceCard from "./Cards/AccountTotalBalanceCard.vue";
 import AccountTotalBorrowedTokensCard from "./Cards/AccountTotalBorrowedTokensCard.vue";
 import AccountTotalSuppliedTokensCard from "./Cards/AccountTotalSuppliedTokensCard.vue";
+import { usePriceFeed } from "@/store/priceFeed";
 
 export default {
     components: {
@@ -49,7 +49,7 @@ export default {
     },
     setup() {
         const { activeAccountStableTokenBalance } = useStableToken();
-        const { priceFeed } = usePriceFeed();
+        const { priceFeed } = storeToRefs(usePriceFeed());
         const { AEUSD_TOKEN } = storeToRefs(useTokens());
 
         return {

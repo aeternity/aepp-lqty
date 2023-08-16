@@ -153,13 +153,13 @@ import { computed, onMounted, ref, watch } from "vue";
 import InputAmount from "@/components/Forms/InputAmount.vue";
 import { useAeppSdk } from "@/composables";
 import { useBorrowerOperations } from "@/composables/borrowerOperations";
-import { usePriceFeed } from "@/composables/priceFeed";
 import { useTroveManager } from "@/composables/troveManager";
 import { useAccounts } from "@/store/accounts";
+import { useBalances } from "@/store/balances";
+import { usePriceFeed } from "@/store/priceFeed";
 import { useTokens } from "@/store/tokens";
 import { ASSETS } from "@/utils";
 import { storeToRefs } from "pinia";
-import { useBalances } from '@/store/balances';
 
 export default {
     components: {
@@ -182,7 +182,7 @@ export default {
             loadActiveTrove,
         } = useTroveManager();
 
-        const { loadPriceFeed, priceFeed } = usePriceFeed();
+        const { priceFeed } = storeToRefs(usePriceFeed());
 
         const {
             loadBorrowerOperationsInitialData,
@@ -197,11 +197,9 @@ export default {
 
         const collateral = ref<Decimal>(Decimal.ZERO);
 
-        const maxBorrowAmount = computed<Decimal>(() => (
-            collateral.value
-                .mul(priceFeed.value)
-                .mul(Decimal.from(0.6))
-        ))
+        const maxBorrowAmount = computed<Decimal>(() =>
+            collateral.value.mul(priceFeed.value).mul(Decimal.from(0.6))
+        );
 
         const selectedBorrowAsset = ref(AEUSD_TOKEN);
         const borrow = ref<Decimal>(Decimal.ZERO);
@@ -293,7 +291,6 @@ export default {
         }
 
         onMounted(() => {
-            loadPriceFeed();
             loadBorrowingRate();
             loadBorrowerOperationsInitialData();
         });

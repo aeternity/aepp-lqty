@@ -29,10 +29,16 @@
                 </v-chip>
             </template>
 
+            <template v-slot:[`item.collateral`]="{ item: { selectable } }">
+                {{ selectable.trove.collateral.prettify(2) }}
+            </template>
+
+            <template v-slot:[`item.debt`]="{ item: { selectable } }">
+                {{ selectable.trove.debt.prettify(2) }}
+            </template>
+
             <template v-slot:[`item.coll_ratio`]="{ item: { selectable } }">
-                <span :class="[selectable.coll_ratio.color]">
-                    {{ selectable.coll_ratio.text }}
-                </span>
+                <CollateralRatioValue :trove="selectable.trove" />
             </template>
         </v-data-table>
     </div>
@@ -40,25 +46,19 @@
 
 <script lang="ts">
 import SystemStatsCard from "@/components/Cards/SystemStatsCard.vue";
+import CollateralRatioValue from "@/components/Liquity/Shared/CollateralRatioValue.vue";
 import { useAeppSdk } from "@/composables";
-import { usePriceFeed } from "@/composables/priceFeed";
 import { formatAddress } from "@/utils";
-import {
-    CRITICAL_COLLATERAL_RATIO,
-    Decimal,
-    Percent,
-    Trove,
-} from "@liquity/lib-base";
+import { Decimal, Percent, Trove } from "@liquity/lib-base";
 import { onMounted, ref } from "vue";
 
 export default {
     components: {
         SystemStatsCard,
+        CollateralRatioValue,
     },
     setup() {
         const { contracts } = useAeppSdk();
-
-        const { loadPriceFeed, priceFeed } = usePriceFeed();
 
         const loading = ref(false);
         const headers = [
@@ -75,10 +75,6 @@ export default {
         const itemsPerPage = ref(5);
         const items = ref<any[]>([]);
 
-        function formatDecimal(value: string) {
-            return Decimal.fromBigNumberString(value).prettify(2);
-        }
-
         async function fetchOpenTroves() {
             loading.value = true;
             const openTrovesCount = (
@@ -93,8 +89,6 @@ export default {
                 }
             }
 
-            const addresses: string[] = [];
-
             // loop though openTrovesCount and retrieve trove owner
             for (const i of range(0, parseInt(openTrovesCount) - 1)) {
                 const address = (
@@ -102,38 +96,23 @@ export default {
                         i
                     )
                 ).decodedResult as string;
+
                 const trove = (
                     await contracts.TroveManager.methods.troves(address)
                 ).decodedResult;
 
-                const newTrove = new Trove(
-                    Decimal.fromBigNumberString(trove.coll),
-                    Decimal.fromBigNumberString(trove.debt)
-                );
-
-                const collateralRatio = newTrove.collateralRatio(
-                    priceFeed.value.toString()
-                );
-
                 items.value.push({
                     owner: address,
-                    collateral: formatDecimal(trove.coll),
-                    debt: formatDecimal(trove.debt),
-                    coll_ratio: {
-                        color: collateralRatio.gt(CRITICAL_COLLATERAL_RATIO)
-                            ? "text-success"
-                            : collateralRatio.gt(1.2)
-                            ? "text-warning"
-                            : "text-danger",
-                        text: new Percent(collateralRatio).prettify(),
-                    },
+                    trove: new Trove(
+                        Decimal.fromBigNumberString(trove.coll),
+                        Decimal.fromBigNumberString(trove.debt)
+                    ),
                 });
             }
             loading.value = false;
         }
 
         onMounted(async () => {
-            await loadPriceFeed();
             fetchOpenTroves();
         });
 
@@ -141,9 +120,9 @@ export default {
             loading,
 
             formatAddress,
-            formatDecimal,
 
             Decimal,
+            Percent,
 
             headers,
             items,

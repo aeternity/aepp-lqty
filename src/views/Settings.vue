@@ -7,12 +7,12 @@
                     <AmountInput
                         label="AE"
                         placeholder="PriceFeed"
-                        v-model="priceFeed"
+                        v-model="localPriceFeed"
                     />
                     <v-btn
                         color="primary"
                         :loading="priceFeedLoading"
-                        @click="updatePriceFeed(priceFeed)"
+                        @click="onUpdatePriceFeed()"
                     >
                         Update Price Feed
                     </v-btn>
@@ -24,24 +24,30 @@
 
 <script lang="ts">
 import AmountInput from "@/components/Forms/AmountInput.vue";
-import { Decimal } from "@liquity/lib-base";
-import { onMounted, ref } from "vue";
-import { usePriceFeed } from "@/composables/priceFeed";
+import { usePriceFeed } from "@/store/priceFeed";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
 
 export default {
     components: { AmountInput },
     setup() {
-        const { priceFeed, priceFeedLoading, updatePriceFeed, loadPriceFeed } =
-            usePriceFeed();
+        const { priceFeed } = storeToRefs(usePriceFeed());
 
-        onMounted(() => {
-            loadPriceFeed();
-        });
+        const priceFeedLoading = ref(false);
+        const localPriceFeed = ref(priceFeed.value);
+
+        const { updatePriceFeed } = usePriceFeed();
+
+        async function onUpdatePriceFeed() {
+            priceFeedLoading.value = true;
+            await updatePriceFeed(localPriceFeed.value);
+            priceFeedLoading.value = false;
+        }
+
         return {
-            priceFeed,
+            localPriceFeed,
+            onUpdatePriceFeed,
             priceFeedLoading,
-
-            updatePriceFeed,
         };
     },
 };
