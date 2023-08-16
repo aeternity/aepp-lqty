@@ -41,7 +41,7 @@
                     <template v-slot:prepend>
                         <v-icon>mdi-list-box</v-icon>
                     </template>
-                    <v-list-item-title> Active Troves </v-list-item-title>
+                    <v-list-item-title> Risky Troves </v-list-item-title>
                 </v-list-item>
 
                 <v-list-item :to="{ name: 'settings' }">

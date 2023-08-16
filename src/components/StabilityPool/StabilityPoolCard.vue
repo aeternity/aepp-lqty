@@ -31,13 +31,13 @@
                         <v-card-text>
                             <v-row>
                                 <v-col cols="6">
-                                    <v-btn color="primary" block>
+                                    <v-btn color="primary" block disabled>
                                         Claim Gains
                                     </v-btn>
                                 </v-col>
 
                                 <v-col cols="6">
-                                    <v-btn color="primary" block>
+                                    <v-btn color="primary" block disabled>
                                         Restake Rewards
                                     </v-btn>
                                 </v-col>

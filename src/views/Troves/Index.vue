@@ -1,87 +1,90 @@
 <template>
     <div>
-        <div v-if="!troves.length" class="text-center pa-12">
-            <v-img
-                src="@/assets/images/vault.svg"
-                width="50%"
-                class="mx-auto"
-            />
+        <SystemStatsCard />
+        <v-alert
+            class="my-4"
+            icon="mdi-information"
+            border="start"
+            variant="tonal"
+            outline
+            color="info"
+            title="Automation is anticipated to oversee the process of liquidation through the use of advanced bots."
+            text="In the initial stages, you might have the option to manually liquidate Troves; however, as the system evolves, this capability is likely to diminish."
+        ></v-alert>
 
-            <h1 class="pt-6">No Open Troves Found!</h1>
-        </div>
-        <v-row>
-            <v-col
-                v-for="(trove, index) of troves"
-                :key="index"
-                cols="12"
-                md="4"
-            >
-                <v-card>
-                    <v-card-title>
-                        <v-avatar size="30">
-                            <v-img
-                                :src="`https://avatars.z52da5wt.xyz/${trove.address}`"
-                            />
-                        </v-avatar>
-                        {{ formatAddress(trove.address) }}
-                    </v-card-title>
-                    <v-divider />
-                    <v-card-text class="d-flex justify-space-around">
-                        <div>
-                            <strong>Collateral:</strong>
-                            {{
-                                Decimal.fromBigNumberString(
-                                    trove.coll
-                                ).prettify(2)
-                            }}
-                            AE
-                        </div>
-                        <v-divider vertical/>
-                        <div>
-                            <strong>Debt:</strong>
-                            {{
-                                Decimal.fromBigNumberString(
-                                    trove.debt
-                                ).prettify(2)
-                            }}
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <v-data-table
+            :loading="loading"
+            v-model:items-per-page="itemsPerPage"
+            :headers="headers"
+            :items="items"
+        >
+            <template v-slot:[`item.owner`]="{ item: { selectable } }">
+                <v-chip pill link>
+                    <v-avatar size="30" class="mr-2" start>
+                        <v-img
+                            :src="`https://avatars.z52da5wt.xyz/${selectable.owner}`"
+                        />
+                    </v-avatar>
+                    {{ formatAddress(selectable.owner) }}
+                </v-chip>
+            </template>
 
-        <div v-if="loading" class="d-flex align-center justify-center pa-12">
-            <div class="text-center">
-                <v-progress-circular indeterminate color="primary" size="40" />
-            </div>
-        </div>
+            <template v-slot:[`item.coll_ratio`]="{ item: { selectable } }">
+                <span :class="[selectable.coll_ratio.color]">
+                    {{ selectable.coll_ratio.text }}
+                </span>
+            </template>
+        </v-data-table>
     </div>
 </template>
 
 <script lang="ts">
+import SystemStatsCard from "@/components/Cards/SystemStatsCard.vue";
 import { useAeppSdk } from "@/composables";
-import { onMounted, ref } from "vue";
+import { usePriceFeed } from "@/composables/priceFeed";
 import { formatAddress } from "@/utils";
-import { Decimal } from "@liquity/lib-base";
+import {
+    CRITICAL_COLLATERAL_RATIO,
+    Decimal,
+    Percent,
+    Trove,
+} from "@liquity/lib-base";
+import { onMounted, ref } from "vue";
 
 export default {
+    components: {
+        SystemStatsCard,
+    },
     setup() {
         const { contracts } = useAeppSdk();
+
+        const { loadPriceFeed, priceFeed } = usePriceFeed();
+
         const loading = ref(false);
-        const troves = ref<any[]>([]);
+        const headers = [
+            {
+                title: "Owner",
+                align: "start",
+                sortable: false,
+                key: "owner",
+            },
+            { title: "Collateral", align: "end", key: "collateral" },
+            { title: "Debt", align: "end", key: "debt" },
+            { title: "Coll. Ratio", align: "end", key: "coll_ratio" },
+        ];
+        const itemsPerPage = ref(5);
+        const items = ref<any[]>([]);
+
+        function formatDecimal(value: string) {
+            return Decimal.fromBigNumberString(value).prettify(2);
+        }
 
         async function fetchOpenTroves() {
             loading.value = true;
             const openTrovesCount = (
                 await contracts.TroveManager.methods.get_trove_owners_count()
             ).decodedResult;
-            console.info("========================");
-            console.info("fetchOpenTroves openTrovesCount ::", openTrovesCount);
-            console.info(
-                "fetchOpenTroves openTrovesCount as int::",
-                parseInt(openTrovesCount)
-            );
-            console.info("========================");
+
             function* range(from: number, to: number, step = 1) {
                 let value = from;
                 while (value <= to) {
@@ -92,7 +95,7 @@ export default {
 
             const addresses: string[] = [];
 
-            // loop though openTrovesCount and retieve trove owner
+            // loop though openTrovesCount and retrieve trove owner
             for (const i of range(0, parseInt(openTrovesCount) - 1)) {
                 const address = (
                     await contracts.TroveManager.methods.get_trove_from_trove_owners_array(
@@ -102,33 +105,49 @@ export default {
                 const trove = (
                     await contracts.TroveManager.methods.troves(address)
                 ).decodedResult;
-                console.info("========================");
-                console.info("address ::", address);
-                console.info("trove ::", trove);
-                console.info("========================");
-                troves.value.push({
-                    address,
-                    ...trove,
+
+                const newTrove = new Trove(
+                    Decimal.fromBigNumberString(trove.coll),
+                    Decimal.fromBigNumberString(trove.debt)
+                );
+
+                const collateralRatio = newTrove.collateralRatio(
+                    priceFeed.value.toString()
+                );
+
+                items.value.push({
+                    owner: address,
+                    collateral: formatDecimal(trove.coll),
+                    debt: formatDecimal(trove.debt),
+                    coll_ratio: {
+                        color: collateralRatio.gt(CRITICAL_COLLATERAL_RATIO)
+                            ? "text-success"
+                            : collateralRatio.gt(1.2)
+                            ? "text-warning"
+                            : "text-danger",
+                        text: new Percent(collateralRatio).prettify(),
+                    },
                 });
             }
-
-            console.info("========================");
-            console.info("openTroves ::", addresses);
-            console.info("========================");
             loading.value = false;
         }
 
-        onMounted(() => {
+        onMounted(async () => {
+            await loadPriceFeed();
             fetchOpenTroves();
         });
 
         return {
             loading,
-            troves,
 
             formatAddress,
+            formatDecimal,
 
             Decimal,
+
+            headers,
+            items,
+            itemsPerPage,
         };
     },
 };
