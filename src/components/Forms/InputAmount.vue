@@ -1,7 +1,6 @@
 <template>
     <div
-      class="input-container px-4 py-2 my-2 mb-10 rounded"
-      :class="['input-container px-4 py-2 my-2 mb-10 rounded', {
+      :class="['input-container px-4 py-2 my-2 rounded', {
         'border-error': !isValid,
       }]"
     >

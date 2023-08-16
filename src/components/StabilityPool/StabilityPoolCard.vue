@@ -3,50 +3,10 @@
         <v-card-title> Stability Pool </v-card-title>
         <v-card-text>
             <v-row>
-                <v-col cols="12" md="12">
-                    <v-card flat border>
-                        <v-card-text>
-                            <v-row>
-                                <v-col cols="6">
-                                    <v-card-title>
-                                        Your AEUSD Balance
-                                    </v-card-title>
-                                    <v-card-text>
-                                        {{ balance.prettify(2) }}
-                                    </v-card-text>
-                                </v-col>
-                                <v-col cols="6">
-                                    <v-card-title>
-                                        Your AEUSD Deposit
-                                    </v-card-title>
-                                    <v-card-text>
-                                        {{ compoundedAeusdDeposit.prettify(2) }}
-                                    </v-card-text>
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-
                 <v-col cols="12" md="6">
-                    <v-card flat border>
-                        <v-card-text class="text-center">
-                            <div class="text-h6">Your Deposits</div>
-                            <div>
-                                {{ compoundedAeusdDeposit.prettify(2) }} AEUSD
-                            </div>
-                        </v-card-text>
-                        <v-divider />
-                        <v-card-text>
-                            <v-row>
-                                <v-col cols="12">
-                                    <StabilityPoolPositionManager
-                                        v-model="compoundedAeusdDeposit"
-                                    />
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
-                    </v-card>
+                    <StabilityPoolPositionManager
+                        v-model="compoundedAeusdDeposit"
+                    />
                 </v-col>
                 <v-col cols="12" md="6">
                     <v-card flat border>

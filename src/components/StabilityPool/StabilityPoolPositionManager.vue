@@ -1,8 +1,32 @@
 <template>
     <div>
-        <v-btn color="primary" block @click="onOpenDialog()">
-            {{ hasDeposit ? "Adjust" : "Deposit" }}
-        </v-btn>
+        <v-card flat border>
+            <v-card-text class="text-center">
+                <v-row>
+                    <v-col cols="6">
+                        <div class="text-h6">Your Deposits</div>
+                        <div>{{ modelValue.prettify(2) }} AEUSD</div>
+                    </v-col>
+
+                    <v-col cols="6">
+                        <div class="text-h6">Pool share</div>
+                        <div>
+                            {{
+                                originalPoolShare.infinite
+                                    ? "N/A"
+                                    : originalPoolShare.prettify(4).concat('%')
+                            }}
+                        </div>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-divider />
+            <v-card-text>
+                <v-btn color="primary" block @click="onOpenDialog()">
+                    {{ hasDeposit ? "Adjust" : "Deposit" }}
+                </v-btn>
+            </v-card-text>
+        </v-card>
 
         <v-dialog v-model="showDialog" max-width="500px" persistent>
             <v-card>
@@ -25,7 +49,28 @@
                         suffix="AEUSD"
                     />
 
+                    <div class="pb-2">
+                        <span>
+                            Pool share:
+                            {{
+                                newPoolShare.infinite
+                                    ? "N/A"
+                                    : newPoolShare.prettify(4).concat('%')
+                            }}
+                        </span>
+                        <small
+                            v-if="poolShareChange?.nonZero"
+                            :class="{
+                                'text-green': poolShareChange?.positive,
+                                'text-red': !poolShareChange?.positive,
+                            }"
+                        >
+                            ({{ poolShareChange?.prettify(4).concat("%") }})
+                        </small>
+                    </div>
+
                     <v-alert
+                        class="mt-4"
                         icon="mdi-information"
                         border="start"
                         variant="tonal"
@@ -63,7 +108,7 @@ import InputAmount from "@/components/Forms/InputAmount.vue";
 import { useAeppSdk } from "@/composables";
 import { useBalances } from "@/store/balances";
 import { useLiquityStore } from "@/store/liquityStore";
-import { Decimal } from "@liquity/lib-base";
+import { Decimal, Difference } from "@liquity/lib-base";
 import { storeToRefs } from "pinia";
 import { computed, PropType, ref } from "vue";
 
@@ -84,11 +129,38 @@ export default {
         const { balance } = storeToRefs(useBalances());
         const { contracts, onAccount } = useAeppSdk();
         const { preloadInitialData } = useLiquityStore();
+        const {
+            numberOfTroves,
+            price,
+            lusdInStabilityPool,
+            total,
+            borrowingRate, //
+            totalStakedLQTY,
+            // kickbackRate, //
+        } = storeToRefs(useLiquityStore());
 
         const showDialog = ref(false);
         const deposit = ref(Decimal.ZERO);
         const loading = ref<boolean>(false);
         const error = ref<string | undefined>(undefined);
+
+        const aeusdInStabilityPoolAfterChange = computed(() =>
+            lusdInStabilityPool.value.sub(props.modelValue).add(deposit.value)
+        );
+
+        const originalPoolShare = computed(() =>
+            props.modelValue.mulDiv(100, lusdInStabilityPool.value)
+        );
+        const newPoolShare = computed(() =>
+            deposit.value.mulDiv(100, aeusdInStabilityPoolAfterChange.value)
+        );
+
+        const poolShareChange = computed(
+            () =>
+                props.modelValue.nonZero &&
+                Difference.between(newPoolShare.value, originalPoolShare.value)
+                    .nonZero
+        );
 
         const hasDeposit = computed<boolean>(() =>
             props.modelValue.gt(Decimal.ZERO)
@@ -181,6 +253,10 @@ export default {
 
             depositingActionMessage,
             depositingActionColor,
+
+            originalPoolShare,
+            newPoolShare,
+            poolShareChange,
         };
     },
 };
