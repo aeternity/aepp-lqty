@@ -14,7 +14,7 @@
                             {{
                                 originalPoolShare.infinite
                                     ? "N/A"
-                                    : originalPoolShare.prettify(4).concat('%')
+                                    : originalPoolShare.prettify(4).concat("%")
                             }}
                         </div>
                     </v-col>
@@ -55,7 +55,7 @@
                             {{
                                 newPoolShare.infinite
                                     ? "N/A"
-                                    : newPoolShare.prettify(4).concat('%')
+                                    : newPoolShare.prettify(4).concat("%")
                             }}
                         </span>
                         <small
@@ -206,7 +206,6 @@ export default {
 
             emit("update:modelValue", deposit.value);
 
-            onCloseDialog();
             preloadInitialData();
         }
 
@@ -219,7 +218,9 @@ export default {
                         onAccount: onAccount(),
                     }
                 );
+                onCloseDialog();
             } catch (_error: any) {
+                console.info("depositToSP->error ::", _error);
                 error.value = _error.message;
             }
         }
@@ -232,7 +233,9 @@ export default {
                         onAccount: onAccount(),
                     }
                 );
+                onCloseDialog();
             } catch (_error: any) {
+                console.info("withdrawFromSP->error ::", _error);
                 error.value = _error.message;
             }
         }
