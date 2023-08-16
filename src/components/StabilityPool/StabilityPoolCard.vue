@@ -31,7 +31,13 @@
                         <v-card-text>
                             <v-row>
                                 <v-col cols="6">
-                                    <v-btn color="primary" block disabled>
+                                    <v-btn
+                                        color="primary"
+                                        block
+                                        :disabled="depositorAeGain.isZero"
+                                        :loading="withdrawingAeGains"
+                                        @click="onWithdrawAeGains()"
+                                    >
                                         Claim Gains
                                     </v-btn>
                                 </v-col>
@@ -63,7 +69,7 @@ import StabilityPoolPositionManager from "./StabilityPoolPositionManager.vue";
 export default {
     components: { StabilityPoolPositionManager },
     setup() {
-        const { contracts } = useAeppSdk();
+        const { contracts, onAccount } = useAeppSdk();
         const { balance } = storeToRefs(useBalances());
         const { activeAccount } = storeToRefs(useAccounts());
 
@@ -104,6 +110,27 @@ export default {
             console.info("========================");
         }
 
+        const withdrawingAeGains = ref(false);
+        async function onWithdrawAeGains() {
+            if (withdrawingAeGains.value) return;
+            withdrawingAeGains.value = true;
+
+            try {
+                const tx =
+                    await contracts.StabilityPool.methods.withdraw_ae_gain_to_trove(
+                        activeAccount.value,
+                        activeAccount.value,
+                        {
+                            onAccount: onAccount(),
+                        }
+                    );
+                console.info("onWithdrawAeGains tx ::", tx);
+            } catch (error) {
+                console.error("onWithdrawAeGains->error ::", error);
+            }
+            withdrawingAeGains.value = false;
+        }
+
         watch(
             activeAccount,
             () => {
@@ -118,6 +145,9 @@ export default {
             depositorAeGain,
             depositorLqtyGain,
             compoundedAeusdDeposit,
+
+            onWithdrawAeGains,
+            withdrawingAeGains,
         };
     },
 };
