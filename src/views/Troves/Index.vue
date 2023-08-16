@@ -11,6 +11,33 @@
             title="Automation is anticipated to oversee the process of liquidation through the use of advanced bots."
             text="In the initial stages, you might have the option to manually liquidate Troves; however, as the system evolves, this capability is likely to diminish."
         ></v-alert>
+        <v-card class="my-4">
+            <v-card-title> Liquidate </v-card-title>
+            <v-card-text>
+                <v-row align="center">
+                    <v-col cols="12" md="8" class="pb-0">
+                        <v-text-field
+                            label="Number of Troves to Liquidate"
+                            variant="outlined"
+                            v-model="numberOfTrovesToLiquidate"
+                            type="number"
+                        >
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                        <v-btn
+                            color="red"
+                            block
+                            size="large"
+                            :loading="liquidatingTroves"
+                            @click="onMassLiquidateTroves()"
+                        >
+                            Liquidate
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
 
         <v-card>
             <v-card-title class="d-flex align-center">
@@ -82,6 +109,9 @@ export default {
         const { contracts } = useAeppSdk();
         const { preloadInitialData } = useLiquityStore();
 
+        const numberOfTrovesToLiquidate = ref(10);
+        const liquidatingTroves = ref(false);
+
         const loading = ref(false);
         const headers = [
             {
@@ -98,6 +128,21 @@ export default {
         const itemsPerPage = ref(5);
         const items = ref<any[]>([]);
 
+        async function onMassLiquidateTroves() {
+            liquidatingTroves.value = true;
+
+            try {
+                await contracts.TroveManager.methods.liquidate_troves(
+                    numberOfTrovesToLiquidate.value
+                );
+                fetchOpenTroves();
+                preloadInitialData();
+            } catch (error) {
+                console.info("onMassLiquidateTroves->error ::", error);
+            }
+            liquidatingTroves.value = false;
+        }
+
         async function onLiquidateTrove(address: string) {
             loading.value = true;
             try {
@@ -108,9 +153,7 @@ export default {
                 );
                 preloadInitialData();
             } catch (error) {
-                console.info("========================");
                 console.info("onLiquidateTrove->error ::", error);
-                console.info("========================");
             }
             loading.value = false;
         }
@@ -170,6 +213,10 @@ export default {
             headers,
             items,
             itemsPerPage,
+
+            numberOfTrovesToLiquidate,
+            liquidatingTroves,
+            onMassLiquidateTroves,
         };
     },
 };
