@@ -18,6 +18,7 @@ import { onMounted, ref, watch } from "vue";
 import { useTroveManager } from "./composables/troveManager";
 import { useAccounts } from "./store/accounts";
 import { useCurrencies } from "./store/currencies";
+import { useLiquityStore } from "./store/liquityStore";
 import { usePriceFeed } from "./store/priceFeed";
 
 const { initSdk, preloadContracts } = useAeppSdk();
@@ -26,6 +27,7 @@ const { activeAccount } = storeToRefs(useAccounts());
 const { loadPriceFeed } = usePriceFeed();
 const { loadAeternityData, loadCurrencyRates } = useCurrencies();
 const loadingApp = ref(true);
+const { preloadInitialData } = useLiquityStore();
 
 watch(
     () => activeAccount,
@@ -40,6 +42,7 @@ onMounted(async () => {
     await preloadContracts();
     loadPriceFeed();
     await loadActiveTrove();
+    preloadInitialData();
     // if there's a connected wallet, retrieve open troves
     loadingApp.value = false;
     setInterval(() => {
