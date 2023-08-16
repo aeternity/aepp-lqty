@@ -16,6 +16,11 @@ export const AETERNITY_TOKEN_BASE_DATA: IToken = {
   convertedBalance: 0,
 };
 
+export const AE_SYMBOL = "AE";
+export const AEUSD_SYMBOL = "AEUSD";
+export const LQTY_SYMBOL = "LQTY";
+
+
 
 export const AEUSD_TOKEN: IToken = {
   name: "AEUSD",
@@ -56,24 +61,6 @@ export const NETWORKS = {
 
 export const ASSETS = [
   AEUSD_TOKEN,
-  // {
-  //   name: "AEEUR",
-  //   symbol: "AEEUR",
-  //   decimals: 17,
-  //   contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6B", // TODO: fake address
-  // },
-  // {
-  //   name: "AEBITCOIN",
-  //   symbol: "AEBITCOIN",
-  //   decimals: 17,
-  //   contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6D", // TODO: fake address
-  // },
-  // {
-  //   name: "AEDASH",
-  //   symbol: "AEDASH",
-  //   decimals: 17,
-  //   contractAddress: "ct_21DHaAHUTVYkTDu8WuG6So77SuEd6da9NcuXbsfHg5FH96mB6C", // TODO: fake address
-  // },
 ];
 
 export const DEFAULT_CURRENCY_CODE: CurrencyCode = 'usd';
