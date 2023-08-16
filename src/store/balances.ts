@@ -17,13 +17,12 @@ export const useBalances = defineStore(
       const newBalances: Record<string, Decimal> = {};
       if (activeAccount.value && _balances.value[activeAccount.value]) {
         Object.keys(_balances.value[activeAccount.value]).forEach((key) => {
-          if (
-            activeAccount.value &&
-            _balances.value[activeAccount.value][key]
-          ) {
-            newBalances[key] = Decimal.fromBigNumberString(
-              _balances.value[activeAccount.value][key]
-            );
+          if (activeAccount.value) {
+            newBalances[key] = _balances.value[activeAccount.value][key]
+              ? Decimal.fromBigNumberString(
+                  _balances.value[activeAccount.value][key]
+                )
+              : Decimal.ZERO;
           }
         });
       }

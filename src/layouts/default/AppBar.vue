@@ -16,6 +16,7 @@
         <HeaderCurrencySelector />
         <WalletConnect />
         <HeaderAccountCard />
+        <HeaderAccountBalances />
     </v-app-bar>
 </template>
 
@@ -24,13 +25,15 @@ import HeaderAccountCard from "@/components/Account/HeaderAccountCard.vue";
 import WalletConnect from "@/components/WalletConnect/WalletConnect.vue";
 import { useAppStore } from "@/store/app";
 import { storeToRefs } from "pinia";
-import HeaderCurrencySelector from '@/components/Common/HeaderCurrencySelector.vue';
+import HeaderCurrencySelector from "@/components/Common/HeaderCurrencySelector.vue";
+import HeaderAccountBalances from "@/components/Account/HeaderAccountBalances.vue";
 
 export default {
     components: {
         HeaderAccountCard,
         WalletConnect,
         HeaderCurrencySelector,
+        HeaderAccountBalances,
     },
     setup() {
         const { leftSideBar } = storeToRefs(useAppStore());
