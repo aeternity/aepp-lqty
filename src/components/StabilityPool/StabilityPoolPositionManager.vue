@@ -45,7 +45,7 @@
                     <InputAmount
                         v-model="deposit"
                         label="Deposit"
-                        :max-amount="balance"
+                        :max-amount="aeusdBalance.add(deposit.toString())"
                         suffix="AEUSD"
                     />
 
@@ -126,7 +126,7 @@ export default {
     setup(props, { emit }) {
         const frontEnd = null; // TODO: Add frontend address
 
-        const { balance } = storeToRefs(useBalances());
+        const { balance, aeusdBalance } = storeToRefs(useBalances());
         const { contracts, onAccount } = useAeppSdk();
         const { preloadInitialData } = useLiquityStore();
         const {
@@ -241,7 +241,7 @@ export default {
         }
 
         return {
-            balance,
+            aeusdBalance,
             hasDeposit,
 
             showDialog,
