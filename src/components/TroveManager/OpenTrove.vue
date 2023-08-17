@@ -19,7 +19,6 @@
                     <InputAmount
                         v-model="collateral"
                         label="Collateral"
-                        suffix="AE"
                         :max-amount="balance"
                     />
 
@@ -46,7 +45,7 @@
                     <InputAmount
                         v-model="borrow"
                         label="Amount"
-                        :suffix="selectedBorrowAsset.symbol"
+                        :token="selectedBorrowAsset"
                         :max-amount="maxBorrowAmount"
                     />
 

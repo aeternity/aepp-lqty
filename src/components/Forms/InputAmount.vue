@@ -1,8 +1,11 @@
 <template>
     <div
-      :class="['input-container px-4 py-2 my-2 rounded', {
-        'border-error': !isValid,
-      }]"
+        :class="[
+            'input-container px-4 py-2 my-2 rounded',
+            {
+                'border-error': !isValid,
+            },
+        ]"
     >
         <div class="input-label">
             {{ label }}
@@ -26,10 +29,10 @@
                 {{ modelValue.prettify(2) }}
             </div>
 
-            <v-btn variant="flat"> {{ suffix }} </v-btn>
+            <v-btn variant="flat"> {{ token.symbol }} </v-btn>
         </div>
         <div class="d-flex justify-space-between">
-            <div>{{ getFormattedFiat(modelValue) }}</div>
+            <div>{{ formattedFiat }}</div>
             <div v-if="!maxAmount?.isZero">
                 <span v-if="maxAmountDescription">
                     {{ maxAmountDescription }}
@@ -37,7 +40,12 @@
                 <span class="px-2">
                     {{ maxAmount.prettify(2) }}
                 </span>
-                <v-btn @click="onSetMaxAmount()" size="small" variant="text" color="primary">
+                <v-btn
+                    @click="onSetMaxAmount()"
+                    size="small"
+                    variant="text"
+                    color="primary"
+                >
                     max
                 </v-btn>
             </div>
@@ -50,6 +58,10 @@ import { Decimal } from "@liquity/lib-base";
 import { PropType, ref } from "vue";
 import { useCurrencies } from "@/store/currencies";
 import { computed } from "vue";
+import { IToken } from "@/types";
+import { AETERNITY_TOKEN_BASE_DATA, AE_SYMBOL } from "@/utils/constants";
+import { storeToRefs } from 'pinia';
+import { usePriceFeed } from '@/store/priceFeed';
 
 export default {
     props: {
@@ -70,26 +82,39 @@ export default {
             type: String,
             required: false,
         },
-        suffix: {
+        suffix: { // TODO:: remove
             type: String,
             required: false,
-            default: 'AE'
-        }
-        // maxAmount
-        // maxedOut
-        // unit (AE, AEUSD)
+            default: "AE",
+        },
+        token: {
+            type: Object as PropType<IToken>,
+            required: false,
+            default: () => AETERNITY_TOKEN_BASE_DATA,
+        },
     },
     emits: ["update:modelValue"],
     setup(props, { emit }) {
+        const { priceFeed } = storeToRefs(usePriceFeed());
+
         const { getFormattedFiat } = useCurrencies();
         const isFocused = ref<boolean>(false);
         const isEditing = ref<boolean>(false);
 
-        const isValid = computed<boolean>(() => (
-            props.modelValue.gte(Decimal.ZERO) && (
-                props.maxAmount.gte(Decimal.ZERO) && props.modelValue.lte(props.maxAmount)
+        const formattedFiat = computed(() =>
+            getFormattedFiat(
+                props.modelValue.div(
+                    props.token.symbol == AE_SYMBOL ? 1 : priceFeed.value
+                )
             )
-        ))
+        );
+
+        const isValid = computed<boolean>(
+            () =>
+                props.modelValue.gte(Decimal.ZERO) &&
+                props.maxAmount.gte(Decimal.ZERO) &&
+                props.modelValue.lte(props.maxAmount)
+        );
 
         function onValueChange(event: any) {
             console.info("========================");
@@ -109,7 +134,8 @@ export default {
             onValueChange,
             getFormattedFiat,
             onSetMaxAmount,
-            isValid
+            isValid,
+            formattedFiat,
         };
     },
 };
@@ -120,7 +146,6 @@ export default {
     border: 1px solid;
     border-color: rgb(var(--v-border-color));
     position: relative;
-
 
     .input-label {
         position: absolute;
