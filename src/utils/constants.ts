@@ -13,7 +13,6 @@ export const AETERNITY_TOKEN_BASE_DATA: IToken = {
   decimals: AETERNITY_COIN_PRECISION,
   name: AETERNITY_COIN_NAME,
   symbol: AETERNITY_SYMBOL,
-  convertedBalance: 0,
 };
 
 export const AE_SYMBOL = "AE";
