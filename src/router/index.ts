@@ -1,63 +1,58 @@
-// Composables
 import { createRouter, createWebHistory } from "vue-router";
+
+import DefaultLayout from "@/layouts/default/Default.vue";
+
+import Dashboard from "@/views/Dashboard.vue";
+
+import Borrow from "@/views/Borrow.vue";
+import Invest from "@/views/Invest.vue";
+import StabilityPool from "@/views/StabilityPool.vue";
+import Troves from "@/views/Troves/Index.vue";
+import Markets from "@/views/Markets.vue";
+import Settings from "@/views/Settings.vue";
 
 const routes = [
   {
     path: "/",
-    component: () => import("@/layouts/default/Default.vue"),
+    component: DefaultLayout,
     children: [
       {
         path: "",
         name: "dashboard",
-        component: () =>
-          import(/* webpackChunkName: "dashboard" */ "@/views/Dashboard.vue"),
+        component: Dashboard,
       },
 
       {
         path: "/borrow",
         name: "borrow",
-        component: () =>
-          import(/* webpackChunkName: "borrow" */ "@/views/Borrow.vue"),
+        component: Borrow,
       },
 
       {
         path: "/invest",
         name: "invest",
-        component: () =>
-          import(/* webpackChunkName: "stake" */ "@/views/Invest.vue"),
+        component: Invest,
       },
       {
         path: "/stability-pool",
         name: "stability-pool",
-        component: () =>
-          import(/* webpackChunkName: "stability-pool" */ "@/views/StabilityPool.vue"),
+        component: StabilityPool,
       },
 
       {
         path: "/troves",
         name: "troves",
-        component: () =>
-          import(
-            /* webpackChunkName: "troves" */ "@/views/Troves/Index.vue"
-          ),
+        component: Troves,
       },
       {
         path: "/markets",
         name: "markets",
-        component: () =>
-          import(/* webpackChunkName: "markets" */ "@/views/Markets.vue"),
+        component: Markets,
       },
       {
         path: "/settings",
         name: "settings",
-        component: () =>
-          import(/* webpackChunkName: "settings" */ "@/views/Settings.vue"),
-      },
-      {
-        path: "/test",
-        name: "test",
-        component: () =>
-          import(/* webpackChunkName: "test" */ "@/views/Test.vue"),
+        component: Settings,
       },
     ],
   },

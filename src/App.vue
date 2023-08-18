@@ -40,11 +40,12 @@ watch(
 onMounted(async () => {
     await Promise.all([loadAeternityData(), loadCurrencyRates(), initSdk()]);
     await preloadContracts();
+    loadingApp.value = false;
+
     loadPriceFeed();
     await loadActiveTrove();
     preloadInitialData();
     // if there's a connected wallet, retrieve open troves
-    loadingApp.value = false;
     setInterval(() => {
         loadPriceFeed();
     }, 1000 * 5);
