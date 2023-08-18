@@ -1,6 +1,6 @@
 <template>
     <v-app-bar>
-        <template v-slot:prepend>
+        <template v-slot:prepend v-if="!smAndDown">
             <v-app-bar-nav-icon
                 @click="onToggleLeftSideBar()"
             ></v-app-bar-nav-icon>
@@ -13,10 +13,10 @@
 
         <v-spacer />
 
-        <HeaderCurrencySelector />
+        <HeaderCurrencySelector v-if="!smAndDown" />
         <WalletConnect />
         <HeaderAccountCard />
-        <HeaderAccountBalances />
+        <HeaderAccountBalances v-if="!smAndDown" />
     </v-app-bar>
 </template>
 
@@ -27,6 +27,7 @@ import { useAppStore } from "@/store/app";
 import { storeToRefs } from "pinia";
 import HeaderCurrencySelector from "@/components/Common/HeaderCurrencySelector.vue";
 import HeaderAccountBalances from "@/components/Account/HeaderAccountBalances.vue";
+import { useDisplay } from "vuetify/lib/framework.mjs";
 
 export default {
     components: {
@@ -37,6 +38,7 @@ export default {
     },
     setup() {
         const { leftSideBar } = storeToRefs(useAppStore());
+        const { smAndDown } = useDisplay();
 
         function onToggleLeftSideBar() {
             console.info("========================");
@@ -49,6 +51,8 @@ export default {
         return {
             leftSideBar,
             onToggleLeftSideBar,
+
+            smAndDown,
         };
     },
 };

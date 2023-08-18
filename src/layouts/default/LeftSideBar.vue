@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer color="surface" :model-value="leftSideBar">
+    <v-navigation-drawer color="surface" v-if="!smAndDown">
         <div style="height: 80%">
             <v-list class="flex-1">
                 <v-list-item :to="{ name: 'dashboard' }" exact>
@@ -66,16 +66,21 @@
 <script lang="ts">
 import { useAppStore } from "@/store/app";
 import { storeToRefs } from "pinia";
+import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 export default {
     setup() {
         const { darkMode, leftSideBar } = storeToRefs(useAppStore());
         const { toggleDarkMode } = useAppStore();
+        const { smAndDown } = useDisplay();
+
 
         return {
             darkMode,
             toggleDarkMode,
             leftSideBar,
+
+            smAndDown,
         };
     },
 };
