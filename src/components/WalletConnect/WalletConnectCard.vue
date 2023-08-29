@@ -32,6 +32,8 @@
 import { storeToRefs } from "pinia";
 import WalletConnect from "./WalletConnect.vue";
 import { useWalletConnect } from "@/store/walletConnect";
+import { onMounted } from "vue";
+import { IS_FRAMED_AEPP } from '@/utils';
 
 export default {
     components: {
@@ -39,6 +41,13 @@ export default {
     },
     setup() {
         const { walletInfo } = storeToRefs(useWalletConnect());
+        const { connectWallet } = useWalletConnect();
+
+        onMounted(() => {
+            if (IS_FRAMED_AEPP) {
+                connectWallet();
+            }
+        });
 
         return {
             walletInfo,

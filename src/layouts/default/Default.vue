@@ -1,6 +1,6 @@
 <template>
     <v-app :theme="darkMode ? 'dark' : 'light'">
-        <default-bar />
+        <default-bar v-if="!IS_FRAMED_AEPP"/>
         <left-side-bar />
 
         <default-view />
@@ -44,6 +44,8 @@ import LeftSideBar from "./LeftSideBar.vue";
 import DefaultView from "./View.vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import { useAepp } from '@/composables/aepp';
+import { IS_FRAMED_AEPP } from "@/utils/constants";
 
 export default {
     components: {
@@ -59,6 +61,7 @@ export default {
             darkMode,
 
             smAndDown,
+            IS_FRAMED_AEPP,
         };
     },
 };

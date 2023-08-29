@@ -8,6 +8,8 @@ export const AETERNITY_COIN_NAME = 'Aeternity';
 export const AETERNITY_COIN_PRECISION = 18; // Amount of decimals
 
 
+export const IS_FRAMED_AEPP = window.parent !== window;
+
 export const AETERNITY_TOKEN_BASE_DATA: IToken = {
   contractId: AETERNITY_CONTRACT_ID,
   decimals: AETERNITY_COIN_PRECISION,
