@@ -87,13 +87,10 @@ export function useAeppSdk() {
 
   async function preloadContracts() {
     const sdk = await getSdk();
-    console.info("========================");
-    console.info("preloadContracts aeSdk::", activeAccount);
-    console.info("========================");
 
     loadingContracts.value = true;
 
-    const contractsVersion = '1.0.1';
+    const contractsVersion = "1.0.1";
     const _contracts = [
       "ActivePool",
       "AEUSDToken",
@@ -114,13 +111,19 @@ export function useAeppSdk() {
 
     for (const contract of _contracts) {
       const contractACI = (
-        await import(`../contracts/${contractsVersion}/${contract}.aci.json?raw`)
+        await import(
+          `../contracts/${contractsVersion}/${contract}.aci.json?raw`
+        )
       ).default;
       const contractInfo = (
-        await import(`../contracts/${contractsVersion}/${contract}.info.json?raw`)
+        await import(
+          `../contracts/${contractsVersion}/${contract}.info.json?raw`
+        )
       ).default;
       const contractByteCode = (
-        await import(`../contracts/${contractsVersion}/${contract}.bytecode?raw`)
+        await import(
+          `../contracts/${contractsVersion}/${contract}.bytecode?raw`
+        )
       ).default;
 
       const contractInstance = await sdk.getContractInstance({
@@ -136,9 +139,7 @@ export function useAeppSdk() {
     loadingContracts.value = false;
     contractsLoaded.value = true;
 
-    console.info("========================");
-    console.info("contracts ::", contracts);
-    console.info("========================");
+    console.info("INIT CONTRACTS ::", contracts);
   }
 
   return {
